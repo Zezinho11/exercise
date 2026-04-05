@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Dragon's Dogma II — Character Creator Assistant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --gold: #c8952a; --gold-dim: #8a6018;
+    --dark: #1a1208; --dark2: #2a1f0a;
+    --parchment: #e8d5a0; --muted: #8a7040; --very-muted: #6a5030;
+  }
+  body {
+    font-family: 'Crimson Text', Georgia, serif;
+    background: #0e0b05; color: var(--parchment);
+    min-height: 100vh; display: flex;
+    align-items: flex-start; justify-content: center; padding: 32px 16px;
+  }
+  .wrap {
+    width: 100%; max-width: 960px;
+    background: linear-gradient(135deg, var(--dark) 0%, var(--dark2) 50%, var(--dark) 100%);
+    border: 1px solid #c8952a44; border-radius: 14px; overflow: hidden;
+    box-shadow: 0 24px 80px #00000088, 0 0 0 1px #c8952a11;
+  }
+  .header {
+    background: linear-gradient(180deg, #c8952a1a 0%, transparent 100%);
+    border-bottom: 1px solid #c8952a44;
+    padding: 18px 28px; display: flex; align-items: center; gap: 18px;
+  }
+  .header-icon {
+    width: 42px; height: 42px; border: 1px solid #c8952a55;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .logo { font-family: 'Cinzel', serif; font-size: 14px; font-weight: 700; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; line-height: 1.2; }
+  .logo small { display: block; font-size: 9px; color: var(--muted); letter-spacing: 3px; font-weight: 400; }
+  .divider-v { width: 1px; height: 36px; background: #c8952a33; flex-shrink: 0; }
+  .subtitle { font-size: 13px; color: var(--muted); font-style: italic; }
+  .body { display: grid; grid-template-columns: 230px 1fr; min-height: 560px; }
+  .sidebar {
+    border-right: 1px solid #c8952a2a; padding: 22px 18px;
+    display: flex; flex-direction: column; gap: 20px; background: #c8952a04;
+  }
+  .label { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; }
+  .upload-zone {
+    border: 1px dashed #c8952a44; border-radius: 8px; padding: 18px;
+    text-align: center; cursor: pointer; background: #c8952a06;
+    min-height: 150px; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 10px;
+    transition: border-color 0.2s, background 0.2s; position: relative; overflow: hidden;
+  }
+  .upload-zone:hover { border-color: #c8952a88; background: #c8952a0e; }
+  .upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  .upload-icon { width: 42px; height: 42px; border: 1px solid #c8952a55; border-radius: 50%; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+  .upload-text { font-size: 12px; color: var(--muted); font-style: italic; pointer-events: none; }
+  .upload-text strong { color: var(--gold); font-style: normal; }
+  #previewImg { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 6px; border: 1px solid #c8952a44; display: none; }
+  #analyzeBtn {
+    width: 100%; padding: 11px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+    border: none; border-radius: 6px; color: var(--dark);
+    font-family: 'Cinzel', serif; font-size: 11px; font-weight: 700;
+    letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; transition: opacity 0.2s; display: none;
+  }
+  #analyzeBtn:hover { opacity: 0.87; }
+  #analyzeBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .pills { display: flex; flex-wrap: wrap; gap: 5px; }
+  .pill {
+    font-size: 10px; padding: 4px 11px; border: 1px solid #c8952a44; border-radius: 20px;
+    color: var(--muted); cursor: pointer; font-family: 'Cinzel', serif;
+    letter-spacing: 0.5px; background: transparent; transition: all 0.15s;
+  }
+  .pill:hover, .pill.active { border-color: var(--gold); color: var(--gold); background: #c8952a11; }
+  .main { padding: 22px 28px; overflow-y: auto; max-height: 640px; }
+  .status-box {
+    padding: 13px 16px; border-radius: 7px; border: 1px solid #c8952a2a;
+    background: #c8952a07; font-size: 13px; color: var(--muted);
+    font-style: italic; text-align: center; margin-bottom: 22px;
+  }
+  .loading { display: none; align-items: center; justify-content: center; gap: 8px; color: var(--gold); font-size: 12px; font-family: 'Cinzel', serif; letter-spacing: 1px; }
+  .spinner { width: 14px; height: 14px; border: 2px solid #c8952a22; border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .section-title { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; margin: 0 0 14px; padding-bottom: 8px; border-bottom: 1px solid #c8952a2a; display: flex; align-items: center; gap: 8px; }
+  .section-dot { display: inline-block; width: 4px; height: 4px; background: var(--gold); border-radius: 50%; flex-shrink: 0; }
+  .separator { height: 1px; background: linear-gradient(90deg, transparent, #c8952a33, transparent); margin: 0 0 22px; }
+  .sliders-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 36px; margin-bottom: 22px; }
+  .slider-row { display: flex; flex-direction: column; gap: 5px; }
+  .slider-header { display: flex; justify-content: space-between; align-items: center; }
+  .slider-name { font-size: 10px; color: #c8952a88; font-family: 'Cinzel', serif; letter-spacing: 0.8px; }
+  .slider-val { font-size: 12px; color: var(--parchment); font-weight: 600; min-width: 28px; text-align: right; }
+  input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 3px; background: var(--dark2); border-radius: 2px; outline: none; border: none; cursor: pointer; }
+  input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--gold); border: 2px solid var(--dark); cursor: pointer; box-shadow: 0 0 6px #c8952a55; }
+  input[type="range"]::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; background: var(--gold); border: 2px solid var(--dark); cursor: pointer; }
+  .color-row { display: flex; flex-direction: column; gap: 7px; }
+  .swatches { display: flex; gap: 6px; flex-wrap: wrap; }
+  .swatch { width: 23px; height: 23px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; transition: transform 0.15s, border-color 0.15s; }
+  .swatch:hover, .swatch.active { border-color: var(--gold); transform: scale(1.18); }
+  #copyBtn {
+    margin-top: 18px; width: 100%; padding: 11px; background: transparent;
+    border: 1px solid #c8952a55; border-radius: 6px; color: var(--gold);
+    font-family: 'Cinzel', serif; font-size: 10px; font-weight: 600;
+    letter-spacing: 2px; cursor: pointer; text-transform: uppercase; transition: all 0.2s;
+  }
+  #copyBtn:hover { background: #c8952a11; border-color: var(--gold); }
+  .hint { font-size: 12px; color: var(--very-muted); font-style: italic; text-align: center; margin-top: 10px; }
+  @media (max-width: 640px) {
+    .body { grid-template-columns: 1fr; }
+    .sidebar { border-right: none; border-bottom: 1px solid #c8952a2a; }
+    .sliders-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="header-icon">
+      <svg viewBox="0 0 24 24" width="20" height="20" stroke="#c8952a" fill="none" stroke-width="1.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v12m0-12l-4 4m4-4l4 4M3 17v2a2 2 0 002 2h14a2 2 0 002-2v-2"/>
+      </svg>
+    </div>
+    <div class="logo">Dragon's Dogma II<small>Character Creator Assistant</small></div>
+    <div class="divider-v"></div>
+    <div class="subtitle">Análise facial → Sliders do Arisen</div>
+  </div>
+
+  <div class="body">
+    <div class="sidebar">
+      <div>
+        <div class="label">Foto de Referência</div>
+        <div class="upload-zone" id="uploadZone">
+          <input type="file" accept="image/*" id="photoInput"/>
+          <div class="upload-icon" id="uploadIcon">
+            <svg viewBox="0 0 24 24" width="20" height="20" stroke="#c8952a" fill="none" stroke-width="1.5">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 15l-5-5L5 21"/>
+            </svg>
+          </div>
+          <div class="upload-text" id="uploadText"><strong>Envie sua foto</strong><br>ou arraste aqui</div>
+        </div>
+        <img id="previewImg" alt="preview"/>
+      </div>
+      <button id="analyzeBtn">Analisar Rosto</button>
+      <div>
+        <div class="label">Vocação</div>
+        <div class="pills">
+          <button class="pill active" data-v="Fighter">Fighter</button>
+          <button class="pill" data-v="Archer">Archer</button>
+          <button class="pill" data-v="Mage">Mage</button>
+          <button class="pill" data-v="Thief">Thief</button>
+          <button class="pill" data-v="Mystic Spearhand">M. Spearhand</button>
+          <button class="pill" data-v="Sorcerer">Sorcerer</button>
+        </div>
+      </div>
+      <div>
+        <div class="label">Gênero</div>
+        <div class="pills">
+          <button class="pill active" data-g="Masculine">Masculino</button>
+          <button class="pill" data-g="Feminine">Feminino</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="status-box" id="statusBox">
+        <div class="loading" id="loadingIndicator">
+          <div class="spinner"></div>
+          <span>O Senhor do Dragão analisa o Arisen...</span>
+        </div>
+        <span id="statusText">Envie uma foto para gerar os sliders automaticamente</span>
+      </div>
+      <div class="section-title"><span class="section-dot"></span>Estrutura do Rosto</div>
+      <div class="sliders-grid" id="faceGrid"></div>
+      <div class="separator"></div>
+      <div class="section-title"><span class="section-dot"></span>Olhos</div>
+      <div class="sliders-grid" id="eyeGrid"></div>
+      <div class="separator"></div>
+      <div class="section-title"><span class="section-dot"></span>Nariz &amp; Boca</div>
+      <div class="sliders-grid" id="noseGrid"></div>
+      <div class="separator"></div>
+      <div class="section-title"><span class="section-dot"></span>Físico Geral</div>
+      <div class="sliders-grid" id="bodyGrid"></div>
+      <div class="separator"></div>
+      <div class="section-title"><span class="section-dot"></span>Cor &amp; Aparência</div>
+      <div class="sliders-grid" id="colorGrid"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px 36px;margin-bottom:24px">
+        <div class="color-row">
+          <div class="slider-name">Cor dos Cabelos</div>
+          <div class="swatches" id="hairColors"></div>
+        </div>
+        <div class="color-row">
+          <div class="slider-name">Cor dos Olhos</div>
+          <div class="swatches" id="eyeColors"></div>
+        </div>
+      </div>
+      <button id="copyBtn">Copiar Configurações ↗</button>
+      <div class="hint">Dica: ajuste os sliders após a análise para personalizar ainda mais</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const HAIR_COLORS = ['#1a0d00','#3d2200','#7a4f1e','#b07530','#d4a853','#f0d090','#e8e0d0','#c0b8b0','#808080','#404040','#d44000','#8b1a1a','#1a1a4e','#2d4a1e'];
+const EYE_COLORS  = ['#3d2800','#5c3d1e','#8b6914','#4a7a2e','#1e4a3d','#1e3d7a','#3d1e7a','#6b4a8b','#a0a0a0','#c0c8d4'];
+const FACE_SLIDERS = [{id:'face_width',name:'Largura do Rosto',val:50},{id:'face_depth',name:'Profundidade do Rosto',val:50},{id:'jaw_width',name:'Largura da Mandíbula',val:45},{id:'jaw_height',name:'Altura da Mandíbula',val:50},{id:'cheekbone_h',name:'Altura das Maçãs',val:55},{id:'cheekbone_w',name:'Largura das Maçãs',val:50},{id:'forehead_h',name:'Altura da Testa',val:50},{id:'forehead_w',name:'Largura da Testa',val:50}];
+const EYE_SLIDERS  = [{id:'eye_size',name:'Tamanho dos Olhos',val:50},{id:'eye_depth',name:'Profundidade dos Olhos',val:50},{id:'eye_spacing',name:'Espaço entre Olhos',val:50},{id:'eye_angle',name:'Ângulo dos Olhos',val:50},{id:'brow_height',name:'Altura das Sobrancelhas',val:55},{id:'brow_thickness',name:'Espessura Sobrancelhas',val:50}];
+const NOSE_SLIDERS = [{id:'nose_height',name:'Altura do Nariz',val:50},{id:'nose_width',name:'Largura do Nariz',val:50},{id:'nose_tip',name:'Ponta do Nariz',val:50},{id:'mouth_width',name:'Largura da Boca',val:50},{id:'lip_thickness',name:'Volume dos Lábios',val:45},{id:'mouth_height',name:'Altura da Boca',val:50}];
+const BODY_SLIDERS = [{id:'body_height',name:'Altura',val:55},{id:'body_build',name:'Constituição',val:50},{id:'muscle_mass',name:'Massa Muscular',val:50},{id:'shoulder_w',name:'Largura dos Ombros',val:55}];
+const COLOR_SLIDERS= [{id:'skin_tone',name:'Tom da Pele',val:50},{id:'skin_texture',name:'Textura da Pele',val:40},{id:'wrinkle_depth',name:'Profundidade Rugas',val:20},{id:'age',name:'Aparência de Idade',val:30}];
+const ALL = [...FACE_SLIDERS,...EYE_SLIDERS,...NOSE_SLIDERS,...BODY_SLIDERS,...COLOR_SLIDERS];
+
+let vals = Object.fromEntries(ALL.map(s=>[s.id,s.val]));
+let hairColor = HAIR_COLORS[1], eyeColor = EYE_COLORS[5];
+let vocation = 'Fighter', gender = 'Masculine';
+let imgB64 = null, imgMime = 'image/jpeg', hasImg = false;
+
+function buildSliders(id, list) {
+  const el = document.getElementById(id); el.innerHTML = '';
+  list.forEach(s => {
+    const v = vals[s.id];
+    const row = document.createElement('div'); row.className = 'slider-row';
+    row.innerHTML = `<div class="slider-header"><span class="slider-name">${s.name}</span><span class="slider-val" id="v_${s.id}">${v}</span></div><input type="range" min="0" max="100" value="${v}" id="sl_${s.id}"/>`;
+    el.appendChild(row);
+    row.querySelector('input').addEventListener('input', e => { vals[s.id]=+e.target.value; document.getElementById('v_'+s.id).textContent=e.target.value; });
+  });
+}
+function buildSwatches(id, colors, sel, cb) {
+  const el = document.getElementById(id); el.innerHTML = '';
+  colors.forEach(c => {
+    const sw = document.createElement('div');
+    sw.className = 'swatch'+(c===sel?' active':''); sw.style.background = c;
+    sw.onclick = () => { el.querySelectorAll('.swatch').forEach(x=>x.classList.remove('active')); sw.classList.add('active'); cb(c); };
+    el.appendChild(sw);
+  });
+}
+function initAll() {
+  buildSliders('faceGrid',FACE_SLIDERS); buildSliders('eyeGrid',EYE_SLIDERS);
+  buildSliders('noseGrid',NOSE_SLIDERS); buildSliders('bodyGrid',BODY_SLIDERS);
+  buildSliders('colorGrid',COLOR_SLIDERS);
+  buildSwatches('hairColors',HAIR_COLORS,hairColor,c=>hairColor=c);
+  buildSwatches('eyeColors',EYE_COLORS,eyeColor,c=>eyeColor=c);
+}
+
+document.querySelectorAll('.pill[data-v]').forEach(p=>p.onclick=()=>{document.querySelectorAll('.pill[data-v]').forEach(x=>x.classList.remove('active'));p.classList.add('active');vocation=p.dataset.v;});
+document.querySelectorAll('.pill[data-g]').forEach(p=>p.onclick=()=>{document.querySelectorAll('.pill[data-g]').forEach(x=>x.classList.remove('active'));p.classList.add('active');gender=p.dataset.g;});
+
+document.getElementById('photoInput').addEventListener('change', e => {
+  const file = e.target.files[0]; if (!file) return;
+  imgMime = ['image/jpeg','image/png','image/gif','image/webp'].includes(file.type) ? file.type : 'image/jpeg';
+  const reader = new FileReader();
+  reader.onload = ev => {
+    imgB64 = ev.target.result.split(',')[1];
+    const img = document.getElementById('previewImg');
+    img.src = ev.target.result; img.style.display = 'block';
+    document.getElementById('uploadIcon').style.display = 'none';
+    document.getElementById('uploadText').style.display = 'none';
+    document.getElementById('analyzeBtn').style.display = 'block';
+    hasImg = true;
+    document.getElementById('loadingIndicator').style.display = 'none';
+    document.getElementById('statusText').style.display = 'block';
+    document.getElementById('statusText').textContent = 'Foto carregada! Clique em "Analisar Rosto".';
+  };
+  reader.readAsDataURL(file);
+});
+
+const zone = document.getElementById('uploadZone');
+zone.addEventListener('dragover', e=>{e.preventDefault();zone.style.borderColor='#c8952a';});
+zone.addEventListener('dragleave', ()=>zone.style.borderColor='');
+zone.addEventListener('drop', e=>{
+  e.preventDefault(); zone.style.borderColor='';
+  const file = e.dataTransfer.files[0]; if (!file) return;
+  const dt = new DataTransfer(); dt.items.add(file);
+  document.getElementById('photoInput').files = dt.files;
+  document.getElementById('photoInput').dispatchEvent(new Event('change'));
+});
+
+document.getElementById('analyzeBtn').addEventListener('click', async () => {
+  if (!hasImg || !imgB64) return;
+  const btn = document.getElementById('analyzeBtn');
+  btn.disabled = true;
+  document.getElementById('statusText').style.display = 'none';
+  document.getElementById('loadingIndicator').style.display = 'flex';
+
+  const prompt = `You are an expert at Dragon's Dogma 2 character creation. Analyze this face photo and return ONLY a JSON object with numeric values (0-100). No other text, just JSON:
+{"face_width":50,"face_depth":50,"jaw_width":45,"jaw_height":50,"cheekbone_h":55,"cheekbone_w":50,"forehead_h":50,"forehead_w":50,"eye_size":50,"eye_depth":50,"eye_spacing":50,"eye_angle":50,"brow_height":55,"brow_thickness":50,"nose_height":50,"nose_width":50,"nose_tip":50,"mouth_width":50,"lip_thickness":45,"mouth_height":50,"body_height":55,"body_build":50,"muscle_mass":50,"shoulder_w":55,"skin_tone":50,"skin_texture":40,"wrinkle_depth":20,"age":30,"hair_color_index":1,"eye_color_index":5}
+Gender: ${gender}. Vocation: ${vocation}. Skin tone: darker=higher value. hair_color_index 0-13, eye_color_index 0-9.`;
+
+  try {
+    const resp = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514", max_tokens: 1000,
+        messages: [{role:"user", content:[
+          {type:"image", source:{type:"base64", media_type:imgMime, data:imgB64}},
+          {type:"text", text:prompt}
+        ]}]
+      })
+    });
+    const data = await resp.json();
+    if (data.error) throw new Error(data.error.message);
+    const text = (data.content||[]).map(b=>b.text||'').join('');
+    const parsed = JSON.parse(text.replace(/```json|```/g,'').trim());
+    if (parsed.hair_color_index!=null) hairColor = HAIR_COLORS[Math.min(+parsed.hair_color_index, HAIR_COLORS.length-1)];
+    if (parsed.eye_color_index!=null)  eyeColor  = EYE_COLORS[Math.min(+parsed.eye_color_index, EYE_COLORS.length-1)];
+    Object.keys(parsed).forEach(k=>{ if(k in vals) vals[k]=parsed[k]; });
+    initAll();
+    document.getElementById('loadingIndicator').style.display = 'none';
+    document.getElementById('statusText').style.display = 'block';
+    document.getElementById('statusText').textContent = '✦ Análise concluída! Sliders ajustados com base no seu rosto.';
+    btn.textContent = 'Reanalisar';
+  } catch(err) {
+    document.getElementById('loadingIndicator').style.display = 'none';
+    document.getElementById('statusText').style.display = 'block';
+    document.getElementById('statusText').textContent = 'Erro: ' + (err.message||'Tente novamente.');
+  } finally { btn.disabled = false; }
+});
+
+document.getElementById('copyBtn').addEventListener('click', () => {
+  const groups = [['Estrutura do Rosto',FACE_SLIDERS],['Olhos',EYE_SLIDERS],['Nariz & Boca',NOSE_SLIDERS],['Físico',BODY_SLIDERS],['Aparência',COLOR_SLIDERS]];
+  const lines = [`=== Dragon's Dogma 2 — Configuração do Arisen ===`,`Vocação: ${vocation} | Gênero: ${gender}`,``];
+  groups.forEach(([t,sl])=>{ lines.push(`--- ${t} ---`); sl.forEach(s=>lines.push(`${s.name}: ${vals[s.id]}`)); lines.push(''); });
+  lines.push(`Cor dos Cabelos: ${hairColor}`, `Cor dos Olhos: ${eyeColor}`);
+  navigator.clipboard.writeText(lines.join('\n')).then(()=>{
+    const btn = document.getElementById('copyBtn');
+    btn.textContent='✓ Copiado!'; setTimeout(()=>btn.textContent='Copiar Configurações ↗',2000);
+  });
+});
+
+initAll();
+</script>
+</body>
+</html>
