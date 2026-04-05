@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Dragon's Dogma II — Character Creator Assistant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --gold: #c8952a; --gold-dim: #8a6018; --gold-light: #e8b84b;
+    --dark: #1a1208; --dark2: #2a1f0a; --dark3: #0e0b05;
+    --parchment: #e8d5a0; --muted: #8a7040; --very-muted: #6a5030;
+    --section-bg: #c8952a08; --border: #c8952a2a;
+  }
+  body {
+    font-family: 'Crimson Text', Georgia, serif;
+    background: var(--dark3); color: var(--parchment);
+    min-height: 100vh; display: flex;
+    align-items: flex-start; justify-content: center; padding: 24px 12px;
+  }
+  .wrap { width: 100%; max-width: 1100px; background: linear-gradient(135deg, var(--dark) 0%, var(--dark2) 50%, var(--dark) 100%); border: 1px solid #c8952a44; border-radius: 14px; overflow: hidden; box-shadow: 0 24px 80px #00000088; }
+
+  .header { background: linear-gradient(180deg, #c8952a1a 0%, transparent 100%); border-bottom: 1px solid #c8952a44; padding: 16px 24px; display: flex; align-items: center; gap: 16px; }
+  .header-icon { width: 40px; height: 40px; border: 1px solid #c8952a55; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .logo { font-family: 'Cinzel', serif; font-size: 14px; font-weight: 700; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; line-height: 1.2; }
+  .logo small { display: block; font-size: 9px; color: var(--muted); letter-spacing: 3px; font-weight: 400; }
+  .divider-v { width: 1px; height: 36px; background: #c8952a33; flex-shrink: 0; }
+  .subtitle { font-size: 13px; color: var(--muted); font-style: italic; }
+
+  .body { display: grid; grid-template-columns: 220px 1fr; min-height: 600px; }
+  .sidebar { border-right: 1px solid var(--border); padding: 18px 14px; display: flex; flex-direction: column; gap: 16px; background: #c8952a04; }
+  .main { padding: 20px 24px; overflow-y: auto; max-height: 78vh; }
+
+  .label { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; }
+  .upload-zone { border: 1px dashed #c8952a44; border-radius: 8px; padding: 14px; text-align: center; cursor: pointer; background: #c8952a06; min-height: 130px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; transition: border-color 0.2s, background 0.2s; position: relative; overflow: hidden; }
+  .upload-zone:hover { border-color: #c8952a88; background: #c8952a0e; }
+  .upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  .upload-icon { width: 38px; height: 38px; border: 1px solid #c8952a55; border-radius: 50%; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+  .upload-text { font-size: 11px; color: var(--muted); font-style: italic; pointer-events: none; }
+  .upload-text strong { color: var(--gold); font-style: normal; }
+  #previewImg { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 6px; border: 1px solid #c8952a44; display: none; }
+  #analyzeBtn { width: 100%; padding: 10px; background: linear-gradient(135deg, var(--gold), var(--gold-dim)); border: none; border-radius: 6px; color: var(--dark); font-family: 'Cinzel', serif; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; transition: opacity 0.2s; display: none; }
+  #analyzeBtn:hover { opacity: 0.87; }
+  #analyzeBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .pills { display: flex; flex-wrap: wrap; gap: 4px; }
+  .pill { font-size: 10px; padding: 3px 9px; border: 1px solid #c8952a44; border-radius: 20px; color: var(--muted); cursor: pointer; font-family: 'Cinzel', serif; letter-spacing: 0.5px; background: transparent; transition: all 0.15s; }
+  .pill:hover, .pill.active { border-color: var(--gold); color: var(--gold); background: #c8952a11; }
+
+  .status-box { padding: 11px 14px; border-radius: 7px; border: 1px solid var(--border); background: var(--section-bg); font-size: 13px; color: var(--muted); font-style: italic; text-align: center; margin-bottom: 18px; }
+  .loading { display: none; align-items: center; justify-content: center; gap: 8px; color: var(--gold); font-size: 12px; font-family: 'Cinzel', serif; letter-spacing: 1px; }
+  .spinner { width: 14px; height: 14px; border: 2px solid #c8952a22; border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .page-tabs { display: flex; gap: 4px; margin-bottom: 18px; flex-wrap: wrap; }
+  .page-tab { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; padding: 6px 14px; border: 1px solid var(--border); border-radius: 20px; color: var(--muted); cursor: pointer; background: transparent; transition: all 0.2s; }
+  .page-tab:hover { border-color: #c8952a88; color: var(--parchment); }
+  .page-tab.active { border-color: var(--gold); color: var(--gold); background: #c8952a11; }
+  .page-content { display: none; }
+  .page-content.active { display: block; }
+
+  .section-title { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; margin: 0 0 12px; padding-bottom: 7px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+  .section-dot { display: inline-block; width: 4px; height: 4px; background: var(--gold); border-radius: 50%; flex-shrink: 0; }
+  .section-block { margin-bottom: 20px; }
+  .separator { height: 1px; background: linear-gradient(90deg, transparent, #c8952a22, transparent); margin: 0 0 20px; }
+
+  .sliders-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 32px; margin-bottom: 4px; }
+  .slider-row { display: flex; flex-direction: column; gap: 4px; }
+  .slider-header { display: flex; justify-content: space-between; align-items: center; }
+  .slider-name { font-size: 10px; color: #c8952a88; font-family: 'Cinzel', serif; letter-spacing: 0.5px; }
+  .slider-val { font-size: 11px; color: var(--parchment); font-weight: 600; min-width: 40px; text-align: right; }
+  input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 3px; background: var(--dark2); border-radius: 2px; outline: none; border: none; cursor: pointer; }
+  input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 13px; height: 13px; border-radius: 50%; background: var(--gold); border: 2px solid var(--dark); cursor: pointer; box-shadow: 0 0 5px #c8952a44; }
+  input[type="range"]::-moz-range-thumb { width: 13px; height: 13px; border-radius: 50%; background: var(--gold); border: 2px solid var(--dark); cursor: pointer; }
+
+  .select-row { display: flex; flex-direction: column; gap: 4px; }
+  .select-row select { background: var(--dark2); color: var(--parchment); border: 1px solid var(--border); border-radius: 5px; padding: 5px 8px; font-family: 'Crimson Text', serif; font-size: 12px; cursor: pointer; outline: none; }
+  .select-row select:focus { border-color: var(--gold); }
+  .select-label { font-size: 10px; color: #c8952a88; font-family: 'Cinzel', serif; letter-spacing: 0.5px; }
+
+  #copyBtn { margin-top: 16px; width: 100%; padding: 10px; background: transparent; border: 1px solid #c8952a55; border-radius: 6px; color: var(--gold); font-family: 'Cinzel', serif; font-size: 10px; font-weight: 600; letter-spacing: 2px; cursor: pointer; text-transform: uppercase; transition: all 0.2s; }
+  #copyBtn:hover { background: #c8952a11; border-color: var(--gold); }
+  .hint { font-size: 11px; color: var(--very-muted); font-style: italic; text-align: center; margin-top: 8px; }
+
+  @media (max-width: 700px) {
+    .body { grid-template-columns: 1fr; }
+    .sidebar { border-right: none; border-bottom: 1px solid var(--border); }
+    .sliders-grid { grid-template-columns: 1fr; }
+    .main { max-height: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="header-icon">
+      <svg viewBox="0 0 24 24" width="20" height="20" stroke="#c8952a" fill="none" stroke-width="1.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v12m0-12l-4 4m4-4l4 4M3 17v2a2 2 0 002 2h14a2 2 0 002-2v-2"/>
+      </svg>
+    </div>
+    <div class="logo">Dragon's Dogma II<small>Character Creator Assistant</small></div>
+    <div class="divider-v"></div>
+    <div class="subtitle">Análise facial → Sliders exatos do jogo</div>
+  </div>
+
+  <div class="body">
+    <div class="sidebar">
+      <div>
+        <div class="label">Foto de Referência</div>
+        <div class="upload-zone" id="uploadZone">
+          <input type="file" accept="image/*" id="photoInput"/>
+          <div class="upload-icon" id="uploadIcon">
+            <svg viewBox="0 0 24 24" width="18" height="18" stroke="#c8952a" fill="none" stroke-width="1.5">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 15l-5-5L5 21"/>
+            </svg>
+          </div>
+          <div class="upload-text" id="uploadText"><strong>Envie sua foto</strong><br>ou arraste aqui</div>
+        </div>
+        <img id="previewImg" alt="preview"/>
+      </div>
+      <button id="analyzeBtn">⚔ Analisar Rosto</button>
+      <div>
+        <div class="label">Raça</div>
+        <div class="pills">
+          <button class="pill active" data-r="Human">Human</button>
+          <button class="pill" data-r="Beastren">Beastren</button>
+        </div>
+      </div>
+      <div>
+        <div class="label">Gênero</div>
+        <div class="pills">
+          <button class="pill active" data-g="Masculine">Masculino</button>
+          <button class="pill" data-g="Feminine">Feminino</button>
+        </div>
+      </div>
+      <div>
+        <div class="label">Vocação</div>
+        <div class="pills">
+          <button class="pill active" data-v="Fighter">Fighter</button>
+          <button class="pill" data-v="Archer">Archer</button>
+          <button class="pill" data-v="Mage">Mage</button>
+          <button class="pill" data-v="Thief">Thief</button>
+          <button class="pill" data-v="M.Spearhand">M.Spear</button>
+          <button class="pill" data-v="Sorcerer">Sorcerer</button>
+          <button class="pill" data-v="Warrior">Warrior</button>
+          <button class="pill" data-v="Trickster">Trickster</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="status-box" id="statusBox">
+        <div class="loading" id="loadingIndicator">
+          <div class="spinner"></div>
+          <span>O Senhor do Dragão analisa o Arisen...</span>
+        </div>
+        <span id="statusText">Envie uma foto para gerar os sliders automaticamente</span>
+      </div>
+
+      <div class="page-tabs">
+        <button class="page-tab active" data-page="body">Corpo</button>
+        <button class="page-tab" data-page="head">Cabeça & Rosto</button>
+        <button class="page-tab" data-page="hair">Cabelo & Pelo</button>
+        <button class="page-tab" data-page="makeup">Maquiagem & Olhos</button>
+        <button class="page-tab" data-page="markings">Marcações</button>
+      </div>
+
+      <!-- CORPO -->
+      <div class="page-content active" id="page-body">
+        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Corpo</div><div class="sliders-grid" id="grid-body_body"></div></div>
+        <div class="separator"></div>
+        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Cabeça (Proporções)</div><div class="sliders-grid" id="grid-body_head"></div></div>
+        <div class="separator"></div>
+        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Parte Superior</div><div class="sliders-grid" id="grid-body_upper"></div></div>
+        <div class="separator"></div>
+        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Parte Inferior</div><div class="sliders-grid" id="grid-body_lower"></div></div>
+        <div class="separator"></div>
+        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Postura</div><div class="sliders-grid" id="grid-body_posture"></div></div>
+      </div>
+
+      <!-- CABEÇA & ROSTO -->
+      <div class="page-content" id="page-head">
+        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Base & Pele</div><div class="sliders-grid" id="grid-head_skin"></div></div>
+        <div class="separator"></div>
+        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Sobrancelhas</div><div class="sliders-grid" id="grid-head_brow"></div></div>
+        <div class="separator"></div>
+        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Olhos (Formato)</div><div class="sliders-grid" id="grid-head_eyes"></div></div>
+        <div class="separator"></div>
+        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Nariz</div><div class="sliders-grid" id="grid-head_nose"></div></div>
+        <div class="separator"></div>
+        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Orelhas</div><div class="sliders-grid" id="grid-head_ears"></div></div>
+        <div class="separator"></div>
+        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Bochechas & Pescoço</div><div class="sliders-grid" id="grid-head_cheeks"></div></div>
+        <div class="separator"></div>
+        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Boca & Lábios</div><div class="sliders-grid" id="grid-head_mouth"></div></div>
+        <div class="separator"></div>
+        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Mandíbula & Queixo</div><div class="sliders-grid" id="grid-head_jaw"></div></div>
+      </div>
+
+      <!-- CABELO -->
+      <div class="page-content" id="page-hair">
+        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Cabelo</div><div class="sliders-grid" id="grid-hair_hair"></div></div>
+        <div class="separator"></div>
+        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Sobrancelhas (Cor & Espessura)</div><div class="sliders-grid" id="grid-hair_eyebrows"></div></div>
+        <div class="separator"></div>
+        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Barba / Pelo Facial</div><div class="sliders-grid" id="grid-hair_facial"></div></div>
+        <div class="separator"></div>
+        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Pelo Corporal</div><div class="sliders-grid" id="grid-hair_body"></div></div>
+      </div>
+
+      <!-- MAQUIAGEM -->
+      <div class="page-content" id="page-makeup">
+        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Globo Ocular & Íris</div><div class="sliders-grid" id="grid-makeup_eyeball"></div></div>
+        <div class="separator"></div>
+        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Cílios</div><div class="sliders-grid" id="grid-makeup_eyelashes"></div></div>
+        <div class="separator"></div>
+        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Sombra</div><div class="sliders-grid" id="grid-makeup_eyeshadow"></div></div>
+        <div class="separator"></div>
+        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Delineador</div><div class="sliders-grid" id="grid-makeup_eyeliner"></div></div>
+        <div class="separator"></div>
+        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Sardas</div><div class="sliders-grid" id="grid-makeup_freckles"></div></div>
+        <div class="separator"></div>
+        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Blush (Bochecha)</div><div class="sliders-grid" id="grid-makeup_cheek"></div></div>
+        <div class="separator"></div>
+        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Batom</div><div class="sliders-grid" id="grid-makeup_lips"></div></div>
+        <div class="separator"></div>
+        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Dentes</div><div class="sliders-grid" id="grid-makeup_teeth"></div></div>
+      </div>
+
+      <!-- MARCAÇÕES -->
+      <div class="page-content" id="page-markings">
+        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Tatuagem Corporal</div><div class="sliders-grid" id="grid-tattoo_body"></div></div>
+        <div class="separator"></div>
+        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Cicatrizes</div><div class="sliders-grid" id="grid-scars"></div></div>
+        <div class="separator"></div>
+        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Sujeira</div><div class="sliders-grid" id="grid-dirt"></div></div>
+      </div>
+
+      <button id="copyBtn">Copiar Configurações ↗</button>
+      <div class="hint">Sliders com nomes e intervalos idênticos ao jogo. Valores "select" representam presets numerados (#1, #2…).</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Exact DD2 slider definitions from community .ini presets (Mx772 auto-slider tool + Steam guides)
+const SLIDER_DEFS = {
+  'body_body': [
+    {id:'height',         name:'Altura',                  min:140, max:220, val:170, unit:'cm'},
+    {id:'torso',          name:'Comprimento do Torso',    min:-100,max:100,  val:0},
+    {id:'muscle_style',   name:'Estilo Muscular',         min:0,   max:31,   val:7,  isSelect:true},
+    {id:'muscle_strength',name:'Força Muscular',          min:-100,max:100,  val:0},
+    {id:'traps',          name:'Trapézio',                min:-100,max:100,  val:0},
+    {id:'upper_mass',     name:'Massa Superior',          min:-100,max:100,  val:0},
+    {id:'lower_mass',     name:'Massa Inferior',          min:-100,max:100,  val:0},
+    {id:'upper_size',     name:'Tamanho Superior',        min:-100,max:100,  val:0},
+    {id:'lower_size',     name:'Tamanho Inferior',        min:-100,max:100,  val:0},
+  ],
+  'body_head': [
+    {id:'head_size',      name:'Tamanho da Cabeça',       min:-100,max:100,  val:0},
+    {id:'head_length',    name:'Comprimento da Cabeça',   min:-100,max:100,  val:0},
+    {id:'head_width',     name:'Largura da Cabeça',       min:-100,max:100,  val:0},
+    {id:'head_depth',     name:'Profundidade da Cabeça',  min:-100,max:100,  val:0},
+    {id:'face_height',    name:'Altura do Rosto',         min:-100,max:100,  val:0},
+    {id:'neck_length',    name:'Comprimento do Pescoço',  min:-100,max:100,  val:0},
+    {id:'neck_thickness', name:'Espessura do Pescoço',    min:-100,max:100,  val:0},
+  ],
+  'body_upper': [
+    {id:'shoulder_width',      name:'Largura dos Ombros',     min:-100,max:100,val:0},
+    {id:'shoulder_size',       name:'Tamanho dos Ombros',     min:-100,max:100,val:0},
+    {id:'chest_thickness',     name:'Espessura do Peito',     min:-100,max:100,val:0},
+    {id:'chest_size',          name:'Tamanho do Peito',       min:-100,max:100,val:0},
+    {id:'torso_width',         name:'Largura do Tronco',      min:-100,max:100,val:0},
+    {id:'torso_depth',         name:'Profundidade do Tronco', min:-100,max:100,val:0},
+    {id:'arm_length',          name:'Comprimento dos Braços', min:-100,max:100,val:0},
+    {id:'arm_size',            name:'Tamanho dos Braços',     min:-100,max:100,val:0},
+    {id:'upper_arm_thickness', name:'Esp. Braço Superior',    min:-100,max:100,val:0},
+    {id:'forearm_thickness',   name:'Esp. Antebraço',         min:-100,max:100,val:0},
+  ],
+  'body_lower': [
+    {id:'waist_width',    name:'Largura da Cintura',      min:-100,max:100,val:0},
+    {id:'waist_size',     name:'Tamanho da Cintura',      min:-100,max:100,val:0},
+    {id:'rear_size',      name:'Tamanho do Traseiro',     min:-100,max:100,val:0},
+    {id:'leg_size',       name:'Tamanho das Pernas',      min:-100,max:100,val:0},
+    {id:'thigh_size',     name:'Tamanho das Coxas',       min:-100,max:100,val:0},
+    {id:'calf_size',      name:'Tamanho das Panturrilhas',min:-100,max:100,val:0},
+  ],
+  'body_posture': [
+    {id:'movement_style', name:'Estilo de Movimento',     min:0,   max:100, val:0},
+    {id:'elbow_angle',    name:'Ângulo dos Cotovelos',    min:-100,max:100,  val:0},
+    {id:'knee_angle',     name:'Ângulo dos Joelhos',      min:-100,max:100,  val:0},
+    {id:'posture',        name:'Postura (Ereta↔Curvada)', min:-100,max:100,  val:0},
+  ],
+
+  // HEAD
+  'head_skin': [
+    {id:'base_head',      name:'Base da Cabeça (#1–32)',  min:1,  max:32,  val:4,  isSelect:true},
+    {id:'base_skin',      name:'Base da Pele (#1–32)',    min:1,  max:32,  val:11, isSelect:true},
+    {id:'skin_color',     name:'Tom da Pele (#1–31)',     min:1,  max:31,  val:13, isSelect:true},
+    {id:'wrinkles',       name:'Rugas',                  min:0,  max:100, val:0},
+    {id:'skin_sheen',     name:'Brilho da Pele',         min:0,  max:100, val:14},
+  ],
+  'head_brow': [
+    {id:'brow_height',        name:'Altura',              min:-100,max:100,val:0},
+    {id:'brow_spacing',       name:'Espaçamento',         min:-100,max:100,val:0},
+    {id:'brow_depth_overall', name:'Profundidade Geral',  min:-100,max:100,val:0},
+    {id:'brow_depth_inner',   name:'Profundidade Interna',min:-100,max:100,val:0},
+    {id:'brow_depth_outer',   name:'Profundidade Externa',min:-100,max:100,val:0},
+    {id:'brow_angle',         name:'Ângulo',              min:-100,max:100,val:0},
+    {id:'brow_bend',          name:'Curvatura',           min:-100,max:100,val:0},
+  ],
+  'head_eyes': [
+    {id:'eye_height',     name:'Altura',                  min:-100,max:100,val:0},
+    {id:'eye_width',      name:'Largura',                 min:-100,max:100,val:0},
+    {id:'eye_depth',      name:'Profundidade',            min:-100,max:100,val:0},
+    {id:'eye_size',       name:'Tamanho',                 min:-100,max:100,val:0},
+    {id:'eye_angle',      name:'Ângulo',                  min:-100,max:100,val:0},
+    {id:'left_closed',    name:'Fechado (Esq.)',          min:0,  max:100, val:0},
+    {id:'squint_left',    name:'Semicerrado (Esq.)',      min:0,  max:100, val:0},
+    {id:'right_closed',   name:'Fechado (Dir.)',          min:0,  max:100, val:0},
+    {id:'squint_right',   name:'Semicerrado (Dir.)',      min:0,  max:100, val:0},
+  ],
+  'head_nose': [
+    {id:'nose_length',        name:'Comprimento do Nariz',    min:-100,max:100,val:0},
+    {id:'bridge_width',       name:'Largura da Ponte',        min:-100,max:100,val:0},
+    {id:'bridge_height',      name:'Altura da Ponte',         min:-100,max:100,val:0},
+    {id:'bridge_bump_overall',name:'Saliência Geral',         min:-100,max:100,val:0},
+    {id:'bridge_bump_upper',  name:'Saliência Superior',      min:-100,max:100,val:0},
+    {id:'bridge_bump_lower',  name:'Saliência Inferior',      min:-100,max:100,val:0},
+    {id:'nostril_size',       name:'Tamanho das Narinas',     min:-100,max:100,val:0},
+    {id:'nostril_height',     name:'Altura das Narinas',      min:-100,max:100,val:0},
+    {id:'nostril_width',      name:'Largura das Narinas',     min:-100,max:100,val:0},
+    {id:'tip_depth',          name:'Profundidade da Ponta',   min:-100,max:100,val:0},
+    {id:'tip_angle',          name:'Ângulo da Ponta',         min:-100,max:100,val:0},
+    {id:'tip_sharpness',      name:'Afilamento da Ponta',     min:-100,max:100,val:0},
+  ],
+  'head_ears': [
+    {id:'ear_style',      name:'Estilo (#0–5)',            min:0,  max:5,   val:0,  isSelect:true},
+    {id:'ear_size',       name:'Tamanho',                 min:-100,max:100,val:0},
+    {id:'ear_angle',      name:'Ângulo',                  min:-100,max:100,val:0},
+    {id:'ear_openness',   name:'Abertura',                min:-100,max:100,val:0},
+    {id:'ear_tilt',       name:'Inclinação',              min:-100,max:100,val:0},
+    {id:'ear_tips',       name:'Pontas',                  min:-100,max:100,val:0},
+    {id:'ear_lobes',      name:'Lóbulos',                 min:-100,max:100,val:0},
+  ],
+  'head_cheeks': [
+    {id:'cheek_thickness',name:'Espessura',               min:-100,max:100,val:0},
+    {id:'cheek_bulge',    name:'Protuberância',           min:-100,max:100,val:0},
+    {id:'neck_fat',       name:'Gordura no Pescoço',      min:-100,max:100,val:0},
+    {id:'cheek_height',   name:'Altura',                  min:-100,max:100,val:0},
+    {id:'cheek_width',    name:'Largura',                 min:-100,max:100,val:0},
+    {id:'cheek_depth',    name:'Profundidade',            min:-100,max:100,val:0},
+  ],
+  'head_mouth': [
+    {id:'mouth_height',       name:'Altura',              min:-100,max:100,val:0},
+    {id:'mouth_width',        name:'Largura',             min:-100,max:100,val:0},
+    {id:'mouth_protrusion',   name:'Protrusão',           min:-100,max:100,val:0},
+    {id:'mouth_corners',      name:'Cantos da Boca',      min:-100,max:100,val:0},
+    {id:'lip_thickness',      name:'Espessura dos Lábios',min:-100,max:100,val:0},
+    {id:'lower_lip_position', name:'Posição Lábio Inferior',min:-100,max:100,val:0},
+  ],
+  'head_jaw': [
+    {id:'jaw_definition',  name:'Definição da Mandíbula', min:-100,max:100,val:0},
+    {id:'jaw_width',       name:'Largura da Mandíbula',   min:-100,max:100,val:0},
+    {id:'jaw_position',    name:'Posição da Mandíbula',   min:-100,max:100,val:0},
+    {id:'jaw_protrusion',  name:'Protrusão da Mandíbula', min:-100,max:100,val:0},
+    {id:'chin_height',     name:'Altura do Queixo',       min:-100,max:100,val:0},
+    {id:'chin_width',      name:'Largura do Queixo',      min:-100,max:100,val:0},
+    {id:'chin_protrusion', name:'Protrusão do Queixo',    min:-100,max:100,val:0},
+    {id:'chin_sharpness',  name:'Afilamento do Queixo',   min:-100,max:100,val:0},
+  ],
+
+  // HAIR
+  'hair_hair': [
+    {id:'hairstyle',      name:'Penteado (#1–60)',         min:1,  max:60,  val:1,  isSelect:true},
+    {id:'root_color',     name:'Cor da Raiz (#1–120)',     min:1,  max:120, val:28, isSelect:true},
+    {id:'tip_color',      name:'Cor da Ponta (#1–120)',    min:1,  max:120, val:28, isSelect:true},
+    {id:'root_blend',     name:'Mistura Raiz/Ponta',       min:0,  max:100, val:50},
+    {id:'sheen_position', name:'Posição do Brilho',        min:0,  max:100, val:50},
+    {id:'sheen',          name:'Intensidade do Brilho',    min:0,  max:100, val:20},
+  ],
+  'hair_eyebrows': [
+    {id:'eyebrow_shape',     name:'Formato (#1–20)',       min:1,  max:20,  val:1,  isSelect:true},
+    {id:'eyebrow_color',     name:'Cor (#1–120)',          min:1,  max:120, val:28, isSelect:true},
+    {id:'eyebrow_thickness', name:'Espessura',             min:0,  max:100, val:50},
+  ],
+  'hair_facial': [
+    {id:'facial_style',     name:'Estilo (#1–30)',         min:1,  max:30,  val:1,  isSelect:true},
+    {id:'facial_color',     name:'Cor da Raiz (#1–120)',   min:1,  max:120, val:1,  isSelect:true},
+    {id:'facial_tip_color', name:'Cor da Ponta (#1–120)',  min:1,  max:120, val:1,  isSelect:true},
+    {id:'facial_root_blend',name:'Mistura Raiz/Ponta',     min:0,  max:100, val:50},
+    {id:'facial_sheen_pos', name:'Posição do Brilho',      min:0,  max:100, val:50},
+    {id:'facial_sheen',     name:'Intensidade do Brilho',  min:0,  max:100, val:13},
+  ],
+  'hair_body': [
+    {id:'body_hair_style',   name:'Estilo (#1–10)',        min:1,  max:10,  val:1,  isSelect:true},
+    {id:'body_hair_color',   name:'Cor (#1–120)',          min:1,  max:120, val:28, isSelect:true},
+    {id:'body_hair_density', name:'Densidade',             min:0,  max:100, val:0},
+  ],
+
+  // MAKEUP
+  'makeup_eyeball': [
+    {id:'eye_style',      name:'Estilo do Olho (#1–20)',   min:1,  max:20,  val:1,  isSelect:true},
+    {id:'iris_primary',   name:'Cor Primária Íris (#1–200)',min:1, max:200, val:64, isSelect:true},
+    {id:'iris_secondary', name:'Cor Secundária (#1–200)',  min:1,  max:200, val:141,isSelect:true},
+    {id:'iris_tertiary',  name:'Cor Terciária (#1–200)',   min:1,  max:200, val:120,isSelect:true},
+    {id:'sclera_color',   name:'Cor da Esclera (#1–200)',  min:1,  max:200, val:107,isSelect:true},
+    {id:'iris_size',      name:'Tamanho da Íris',          min:-100,max:100,val:0},
+    {id:'pupil_size',     name:'Tamanho da Pupila',        min:-100,max:100,val:0},
+  ],
+  'makeup_eyelashes': [
+    {id:'eyelash_shape',     name:'Formato (#1–20)',       min:1,  max:20,  val:1,  isSelect:true},
+    {id:'eyelash_root_color',name:'Cor da Raiz (#1–120)',  min:1,  max:120, val:1,  isSelect:true},
+    {id:'eyelash_tip_color', name:'Cor da Ponta (#1–120)', min:1,  max:120, val:8,  isSelect:true},
+    {id:'root_tip_blend',    name:'Mistura Raiz/Ponta',    min:0,  max:100, val:50},
+    {id:'eyelash_length',    name:'Comprimento',           min:0,  max:100, val:50},
+    {id:'eyelash_density',   name:'Densidade',             min:0,  max:100, val:16},
+  ],
+  'makeup_eyeshadow': [
+    {id:'eyeshadow_style',   name:'Estilo (#1–20)',        min:1,  max:20,  val:1,  isSelect:true},
+    {id:'eyeshadow_color1',  name:'Cor 1 (#1–200)',        min:1,  max:200, val:1,  isSelect:true},
+    {id:'eyeshadow_color2',  name:'Cor 2 (#1–200)',        min:1,  max:200, val:1,  isSelect:true},
+    {id:'eyeshadow_intensity',name:'Intensidade',          min:0,  max:100, val:0},
+    {id:'eyeshadow_coverage',name:'Cobertura',             min:0,  max:100, val:100},
+    {id:'eyeshadow_opacity', name:'Opacidade',             min:0,  max:100, val:0},
+    {id:'eyeshadow_metallic',name:'Metálico',              min:0,  max:100, val:0},
+    {id:'eyeshadow_sheen',   name:'Brilho',                min:0,  max:100, val:50},
+  ],
+  'makeup_eyeliner': [
+    {id:'eyeliner_style',    name:'Estilo (#1–20)',        min:1,  max:20,  val:1,  isSelect:true},
+    {id:'eyeliner_color',    name:'Cor (#1–200)',          min:1,  max:200, val:1,  isSelect:true},
+    {id:'eyeliner_coverage', name:'Cobertura',             min:0,  max:100, val:0},
+    {id:'eyeliner_opacity',  name:'Opacidade',             min:0,  max:100, val:0},
+    {id:'eyeliner_metallic', name:'Metálico',              min:0,  max:100, val:0},
+    {id:'eyeliner_sheen',    name:'Brilho',                min:0,  max:100, val:50},
+  ],
+  'makeup_freckles': [
+    {id:'freckles_type',     name:'Tipo (#1–10)',          min:1,  max:10,  val:1,  isSelect:true},
+    {id:'freckles_color',    name:'Cor (#1–120)',          min:1,  max:120, val:1,  isSelect:true},
+    {id:'freckle_opacity',   name:'Opacidade',             min:0,  max:100, val:0},
+  ],
+  'makeup_cheek': [
+    {id:'cheek_style',       name:'Estilo (#1–10)',        min:1,  max:10,  val:1,  isSelect:true},
+    {id:'cheek_color_m',     name:'Cor (#1–200)',          min:1,  max:200, val:1,  isSelect:true},
+    {id:'cheek_opacity',     name:'Opacidade',             min:0,  max:100, val:0},
+    {id:'cheek_metallic',    name:'Metálico',              min:0,  max:100, val:0},
+    {id:'cheek_sheen',       name:'Brilho',                min:0,  max:100, val:50},
+  ],
+  'makeup_lips': [
+    {id:'lip_style',         name:'Estilo (#1–20)',        min:1,  max:20,  val:1,  isSelect:true},
+    {id:'lip_color',         name:'Cor (#1–200)',          min:1,  max:200, val:1,  isSelect:true},
+    {id:'lip_color_spread',  name:'Spread da Cor',         min:0,  max:100, val:0},
+    {id:'lip_opacity',       name:'Opacidade',             min:0,  max:100, val:0},
+    {id:'lip_metallic',      name:'Metálico',              min:0,  max:100, val:0},
+    {id:'lip_sheen',         name:'Brilho',                min:0,  max:100, val:50},
+  ],
+  'makeup_teeth': [
+    {id:'upper_teeth',       name:'Dentes Superiores',    min:0,  max:8,   val:0},
+    {id:'lower_teeth',       name:'Dentes Inferiores',    min:0,  max:8,   val:0},
+    {id:'teeth_color',       name:'Cor dos Dentes (#1–20)',min:1, max:20,  val:7,  isSelect:true},
+  ],
+
+  // MARKINGS
+  'tattoo_body': [
+    {id:'body_tattoo_style',          name:'Estilo (#1–100)',        min:1,  max:100, val:1,  isSelect:true},
+    {id:'body_tattoo_primary_color',  name:'Cor Primária (#1–200)',  min:1,  max:200, val:1,  isSelect:true},
+    {id:'body_tattoo_secondary_color',name:'Cor Secundária (#1–200)',min:1,  max:200, val:1,  isSelect:true},
+    {id:'body_tattoo_vertical_pos',   name:'Posição Vertical',       min:-100,max:100,val:0},
+    {id:'body_tattoo_horizontal_pos', name:'Posição Horizontal',     min:-100,max:100,val:0},
+    {id:'body_tattoo_rotation',       name:'Rotação',                min:-100,max:100,val:0},
+    {id:'body_tattoo_overall_scale',  name:'Escala Geral',           min:0,  max:200, val:25},
+    {id:'body_tattoo_opacity',        name:'Opacidade',              min:0,  max:100, val:100},
+    {id:'body_tattoo_metallic',       name:'Metálico',               min:0,  max:100, val:0},
+    {id:'body_tattoo_sheen',          name:'Brilho',                 min:0,  max:100, val:50},
+  ],
+  'scars': [
+    {id:'body_scar_style',   name:'Estilo Cicatriz (#1–30)', min:1,  max:30,  val:1, isSelect:true},
+    {id:'body_scar_color',   name:'Cor (#1–120)',             min:1,  max:120, val:1, isSelect:true},
+    {id:'body_scar_vert_pos',name:'Posição Vertical',         min:-100,max:100,val:0},
+    {id:'body_scar_horz_pos',name:'Posição Horizontal',       min:-100,max:100,val:0},
+    {id:'body_scar_rotation',name:'Rotação',                  min:-100,max:100,val:0},
+    {id:'body_scar_scale',   name:'Escala',                   min:0,  max:200, val:25},
+    {id:'body_scar_opacity', name:'Opacidade',                min:0,  max:100, val:100},
+  ],
+  'dirt': [
+    {id:'dirt_style',    name:'Estilo Sujeira (#1–10)', min:1, max:10,  val:1, isSelect:true},
+    {id:'dirt_color',    name:'Cor (#1–120)',            min:1, max:120, val:1, isSelect:true},
+    {id:'dirt_opacity',  name:'Opacidade',               min:0, max:100, val:0},
+  ],
+};
+
+// State
+let vals = {};
+Object.values(SLIDER_DEFS).forEach(sliders => sliders.forEach(s => { vals[s.id] = s.val; }));
+let race = 'Human', gender = 'Masculine', vocation = 'Fighter';
+let imgB64 = null, imgMime = 'image/jpeg', hasImg = false;
+
+// Build UI
+function buildSection(gridId, sliders) {
+  const el = document.getElementById('grid-' + gridId);
+  if (!el) return;
+  el.innerHTML = '';
+  sliders.forEach(s => {
+    const v = vals[s.id];
+    const row = document.createElement('div');
+    if (s.isSelect) {
+      row.className = 'select-row';
+      let opts = '';
+      for (let i = s.min; i <= s.max; i++) opts += `<option value="${i}"${i===v?' selected':''}>#${i}</option>`;
+      row.innerHTML = `<span class="select-label">${s.name}</span><select id="sl_${s.id}">${opts}</select>`;
+      el.appendChild(row);
+      row.querySelector('select').addEventListener('change', e => { vals[s.id] = +e.target.value; });
+    } else {
+      row.className = 'slider-row';
+      const u = s.unit ? ' ' + s.unit : '';
+      row.innerHTML = `<div class="slider-header"><span class="slider-name">${s.name}</span><span class="slider-val" id="v_${s.id}">${v}${u}</span></div><input type="range" min="${s.min}" max="${s.max}" value="${v}" id="sl_${s.id}"/>`;
+      el.appendChild(row);
+      row.querySelector('input').addEventListener('input', e => {
+        vals[s.id] = +e.target.value;
+        document.getElementById('v_' + s.id).textContent = e.target.value + u;
+      });
+    }
+  });
+}
+
+function buildAll() {
+  Object.entries(SLIDER_DEFS).forEach(([k]) => buildSection(k, SLIDER_DEFS[k]));
+}
+
+function applyVals(parsed) {
+  Object.keys(parsed).forEach(k => {
+    if (!(k in vals)) return;
+    vals[k] = parsed[k];
+    const sl = document.getElementById('sl_' + k);
+    const vEl = document.getElementById('v_' + k);
+    if (!sl) return;
+    sl.value = parsed[k];
+    if (vEl) vEl.textContent = parsed[k];
+  });
+}
+
+// Tabs
+document.querySelectorAll('.page-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('page-' + tab.dataset.page).classList.add('active');
+  });
+});
+
+// Pills
+document.querySelectorAll('.pill[data-r]').forEach(p => p.onclick = () => { document.querySelectorAll('.pill[data-r]').forEach(x=>x.classList.remove('active')); p.classList.add('active'); race=p.dataset.r; });
+document.querySelectorAll('.pill[data-g]').forEach(p => p.onclick = () => { document.querySelectorAll('.pill[data-g]').forEach(x=>x.classList.remove('active')); p.classList.add('active'); gender=p.dataset.g; });
+document.querySelectorAll('.pill[data-v]').forEach(p => p.onclick = () => { document.querySelectorAll('.pill[data-v]').forEach(x=>x.classList.remove('active')); p.classList.add('active'); vocation=p.dataset.v; });
+
+// Photo
+document.getElementById('photoInput').addEventListener('change', e => {
+  const file = e.target.files[0]; if (!file) return;
+  imgMime = ['image/jpeg','image/png','image/gif','image/webp'].includes(file.type)?file.type:'image/jpeg';
+  const reader = new FileReader();
+  reader.onload = ev => {
+    imgB64 = ev.target.result.split(',')[1];
+    document.getElementById('previewImg').src = ev.target.result;
+    document.getElementById('previewImg').style.display = 'block';
+    document.getElementById('uploadIcon').style.display = 'none';
+    document.getElementById('uploadText').style.display = 'none';
+    document.getElementById('analyzeBtn').style.display = 'block';
+    hasImg = true;
+    document.getElementById('loadingIndicator').style.display = 'none';
+    document.getElementById('statusText').style.display = 'block';
+    document.getElementById('statusText').textContent = 'Foto carregada! Clique em "Analisar Rosto".';
+  };
+  reader.readAsDataURL(file);
+});
+const zone = document.getElementById('uploadZone');
+zone.addEventListener('dragover', e=>{e.preventDefault();zone.style.borderColor='#c8952a';});
+zone.addEventListener('dragleave', ()=>zone.style.borderColor='');
+zone.addEventListener('drop', e=>{
+  e.preventDefault();zone.style.borderColor='';
+  const file=e.dataTransfer.files[0];if(!file)return;
+  const dt=new DataTransfer();dt.items.add(file);
+  document.getElementById('photoInput').files=dt.files;
+  document.getElementById('photoInput').dispatchEvent(new Event('change'));
+});
+
+// Analyze
+document.getElementById('analyzeBtn').addEventListener('click', async () => {
+  if (!hasImg||!imgB64) return;
+  const btn = document.getElementById('analyzeBtn');
+  btn.disabled = true;
+  document.getElementById('statusText').style.display = 'none';
+  document.getElementById('loadingIndicator').style.display = 'flex';
+
+  const prompt = `You are an expert Dragon's Dogma 2 character creator. Analyze this face photo and return ONLY a valid JSON object. No markdown, no backticks, no explanation.
+
+Race: ${race}. Gender: ${gender}. Vocation: ${vocation}.
+
+Map facial features to these exact DD2 slider IDs and ranges:
+
+height (140-220), torso (-100,100), muscle_strength (-100,100), traps (-100,100), upper_mass (-100,100), lower_mass (-100,100), upper_size (-100,100), lower_size (-100,100),
+head_size (-100,100), head_length (-100,100), head_width (-100,100), head_depth (-100,100), face_height (-100,100), neck_length (-100,100), neck_thickness (-100,100),
+shoulder_width (-100,100), chest_thickness (-100,100), chest_size (-100,100), torso_width (-100,100), arm_size (-100,100),
+waist_width (-100,100), rear_size (-100,100), leg_size (-100,100), thigh_size (-100,100), calf_size (-100,100), posture (-100,100),
+skin_color (1-31: 1=very light 13=medium 31=very dark), wrinkles (0-100), skin_sheen (0-100),
+brow_height (-100,100), brow_spacing (-100,100), brow_depth_overall (-100,100), brow_angle (-100,100), brow_bend (-100,100),
+eye_height (-100,100), eye_width (-100,100), eye_depth (-100,100), eye_size (-100,100), eye_angle (-100,100), squint_left (0-100), squint_right (0-100),
+nose_length (-100,100), bridge_width (-100,100), bridge_height (-100,100), bridge_bump_overall (-100,100), nostril_size (-100,100), nostril_width (-100,100), tip_depth (-100,100), tip_angle (-100,100), tip_sharpness (-100,100),
+ear_size (-100,100), ear_angle (-100,100),
+cheek_thickness (-100,100), cheek_bulge (-100,100), neck_fat (-100,100), cheek_height (-100,100), cheek_width (-100,100), cheek_depth (-100,100),
+mouth_height (-100,100), mouth_width (-100,100), mouth_protrusion (-100,100), mouth_corners (-100,100), lip_thickness (-100,100), lower_lip_position (-100,100),
+jaw_definition (-100,100), jaw_width (-100,100), jaw_position (-100,100), jaw_protrusion (-100,100), chin_height (-100,100), chin_width (-100,100), chin_protrusion (-100,100), chin_sharpness (-100,100),
+root_color (1-120), tip_color (1-120), eyebrow_color (1-120), iris_primary (1-200), sclera_color (1-200)
+
+Be precise. Analyze real facial structure carefully.`;
+
+  try {
+    const resp = await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ model:"claude-sonnet-4-20250514", max_tokens:1200,
+        messages:[{role:"user",content:[
+          {type:"image",source:{type:"base64",media_type:imgMime,data:imgB64}},
+          {type:"text",text:prompt}
+        ]}]
+      })
+    });
+    const data = await resp.json();
+    if (data.error) throw new Error(data.error.message);
+    const text = (data.content||[]).map(b=>b.text||'').join('');
+    const parsed = JSON.parse(text.replace(/```json|```/g,'').trim());
+    applyVals(parsed);
+    document.getElementById('loadingIndicator').style.display = 'none';
+    document.getElementById('statusText').style.display = 'block';
+    document.getElementById('statusText').textContent = '✦ Análise concluída! Navegue pelas abas para ver todos os sliders ajustados.';
+    btn.textContent = '⚔ Reanalisar';
+  } catch(err) {
+    document.getElementById('loadingIndicator').style.display = 'none';
+    document.getElementById('statusText').style.display = 'block';
+    document.getElementById('statusText').textContent = 'Erro: ' + (err.message||'Tente novamente.');
+  } finally { btn.disabled=false; }
+});
+
+// Copy
+document.getElementById('copyBtn').addEventListener('click', () => {
+  const names = {
+    'body_body':'Corpo','body_head':'Cabeça (Proporções)','body_upper':'Parte Superior','body_lower':'Parte Inferior','body_posture':'Postura',
+    'head_skin':'Base & Pele','head_brow':'Sobrancelhas','head_eyes':'Olhos','head_nose':'Nariz','head_ears':'Orelhas','head_cheeks':'Bochechas','head_mouth':'Boca','head_jaw':'Mandíbula & Queixo',
+    'hair_hair':'Cabelo','hair_eyebrows':'Sobrancelhas (cor)','hair_facial':'Barba','hair_body':'Pelo Corporal',
+    'makeup_eyeball':'Globo Ocular','makeup_eyelashes':'Cílios','makeup_eyeshadow':'Sombra','makeup_eyeliner':'Delineador','makeup_freckles':'Sardas','makeup_cheek':'Blush','makeup_lips':'Batom','makeup_teeth':'Dentes',
+    'tattoo_body':'Tatuagem','scars':'Cicatrizes','dirt':'Sujeira'
+  };
+  const lines = [`=== Dragon's Dogma 2 — Arisen ===`,`Raça: ${race} | Gênero: ${gender} | Vocação: ${vocation}`,``];
+  Object.entries(SLIDER_DEFS).forEach(([sec, sliders]) => {
+    lines.push(`--- ${names[sec]||sec} ---`);
+    sliders.forEach(s => lines.push(`${s.name}: ${vals[s.id]}`));
+    lines.push('');
+  });
+  navigator.clipboard.writeText(lines.join('\n')).then(()=>{
+    const btn=document.getElementById('copyBtn');
+    btn.textContent='✓ Copiado!'; setTimeout(()=>btn.textContent='Copiar Configurações ↗',2000);
+  });
+});
+
+buildAll();
+</script>
+</body>
+</html>
