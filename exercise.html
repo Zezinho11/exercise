@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-BR"></html>
 <head>
+    <meta charset="utf-8" />
+
+    <title>Minha pagina</title>
+    <link
+            href="https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300|Sonsie+One"
+            rel="stylesheet"
+            type="text/css" />
+    <link rel="stylesheet" href="Css.css" />
+
     <!-- Sempre posicionado no cabeçalho para linkar o css ao arquivo principal -->
     <link rel="stylesheet" href="Css.css"/>
     <meta charset="UTF-8">
@@ -43,6 +52,31 @@
     <h3>ご飯が熱い</h3>
 </head>
 <body>
+
+<main>
+
+<!--Estrutura de conteudo-->
+<header>
+    <h1>Menu</h1>
+</header>
+
+    <nav>
+
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Nosso time</a></li>
+            <li><a href="#">Projetos</a></li>
+            <li><a href="#">Contato</a></li>
+        </ul>
+
+        <form>
+            <input type="search" name="q" placeholder="Pesquisar" />
+            <input type="submit" value="vá!" />
+        </form>
+
+    </nav>
+
+
 <p>
     <ul>
     <li>Estrutura e exemplos HTML:</li>
@@ -191,7 +225,7 @@
 </p>
 <p>If x<sup>2</sup> is 9, x must equal 3 or -3.</p>
 <p>best day ever, the 11<sup>th</sup> of september</p>
-
+</main>
 <!--marcação de codigos no html-->
 <pre><code>var para = document.querySelector('p');
 
@@ -231,6 +265,19 @@ para.onclick = function() {
 <!-- Chamando um número de semana específico -->
 <time datetime="2016-W04">The fourth week of 2016</time>
 
+<!--elementos não semanticos-->
+<p>
+    Era uma vez um homem chamado O'Dell<br />
+    Que adorava escrever HTML<br />
+    Mas sua estrutura era ruim, sua semântica era triste<br />
+    e sua marcação não leu muito bem.
+</p>
+<!--<div> tambem são elementos não semanticos-->
+
+
+
+
+
 
 
 
@@ -239,6 +286,11 @@ para.onclick = function() {
 <address>
     <p>Page written by <a href="/authors/jose-suzuki/">José Suzuki.</a> </p>
 </address>
+
+<!--Rodapé-->
+<footer>
+    ©Copyright 2026 by José Suzuki. All rights reversed.
+</footer>
 
 <!-- recomendado ficar antes da tag de fechamento body -->
 <!-- Puxa o JS para o codigo principal -->
