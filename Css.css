@@ -1,5 +1,9 @@
 /* || General setup */
 
+p{
+    background-image: url("https://wallpapersok.com/images/hd/shocked-funny-cat-in-space-v24i6v24vmtk4ygu.jpg");
+}
+
 body {
     margin: 0;
 }
@@ -126,3 +130,4 @@ aside img {
 footer {
     margin-top: 10px;
 }
+
