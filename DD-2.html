@@ -1,603 +1,792 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Dragon's Dogma II — Character Creator Assistant</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --gold: #c8952a; --gold-dim: #8a6018; --gold-light: #e8b84b;
-    --dark: #1a1208; --dark2: #2a1f0a; --dark3: #0e0b05;
-    --parchment: #e8d5a0; --muted: #8a7040; --very-muted: #6a5030;
-    --section-bg: #c8952a08; --border: #c8952a2a;
-  }
-  body {
-    font-family: 'Crimson Text', Georgia, serif;
-    background: var(--dark3); color: var(--parchment);
-    min-height: 100vh; display: flex;
-    align-items: flex-start; justify-content: center; padding: 24px 12px;
-  }
-  .wrap { width: 100%; max-width: 1100px; background: linear-gradient(135deg, var(--dark) 0%, var(--dark2) 50%, var(--dark) 100%); border: 1px solid #c8952a44; border-radius: 14px; overflow: hidden; box-shadow: 0 24px 80px #00000088; }
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dragon's Dogma II — Character Creator Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+  <style>
+    /* ==================== RESET & VARIABLES ==================== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --gold: #c8952a; --gold-dim: #8a6018; --gold-light: #e8b84b;
+      --dark: #1a1208; --dark2: #2a1f0a; --dark3: #0e0b05;
+      --parchment: #e8d5a0; --muted: #8a7040; --very-muted: #6a5030;
+      --section-bg: #c8952a08; --border: #c8952a2a;
+      --font-cinzel: 'Cinzel', serif;
+      --font-crimson: 'Crimson Text', Georgia, serif;
+    }
 
-  .header { background: linear-gradient(180deg, #c8952a1a 0%, transparent 100%); border-bottom: 1px solid #c8952a44; padding: 16px 24px; display: flex; align-items: center; gap: 16px; }
-  .header-icon { width: 40px; height: 40px; border: 1px solid #c8952a55; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .logo { font-family: 'Cinzel', serif; font-size: 14px; font-weight: 700; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; line-height: 1.2; }
-  .logo small { display: block; font-size: 9px; color: var(--muted); letter-spacing: 3px; font-weight: 400; }
-  .divider-v { width: 1px; height: 36px; background: #c8952a33; flex-shrink: 0; }
-  .subtitle { font-size: 13px; color: var(--muted); font-style: italic; }
+    /* ==================== LAYOUT PRINCIPALS ==================== */
+    body {
+      font-family: var(--font-crimson);
+      background: var(--dark3);
+      color: var(--parchment);
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 24px 12px;
+    }
 
-  .body { display: grid; grid-template-columns: 220px 1fr; min-height: 600px; }
-  .sidebar { border-right: 1px solid var(--border); padding: 18px 14px; display: flex; flex-direction: column; gap: 16px; background: #c8952a04; }
-  .main { padding: 20px 24px; overflow-y: auto; max-height: 78vh; }
+    .wrap {
+      width: 100%;
+      max-width: 1100px;
+      background: linear-gradient(135deg, var(--dark) 0%, var(--dark2) 50%, var(--dark) 100%);
+      border: 1px solid #c8952a44;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 24px 80px #00000088;
+    }
 
-  .label { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; }
-  .upload-zone { border: 1px dashed #c8952a44; border-radius: 8px; padding: 14px; text-align: center; cursor: pointer; background: #c8952a06; min-height: 130px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; transition: border-color 0.2s, background 0.2s; position: relative; overflow: hidden; }
-  .upload-zone:hover { border-color: #c8952a88; background: #c8952a0e; }
-  .upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
-  .upload-icon { width: 38px; height: 38px; border: 1px solid #c8952a55; border-radius: 50%; display: flex; align-items: center; justify-content: center; pointer-events: none; }
-  .upload-text { font-size: 11px; color: var(--muted); font-style: italic; pointer-events: none; }
-  .upload-text strong { color: var(--gold); font-style: normal; }
-  #previewImg { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 6px; border: 1px solid #c8952a44; display: none; }
-  #analyzeBtn { width: 100%; padding: 10px; background: linear-gradient(135deg, var(--gold), var(--gold-dim)); border: none; border-radius: 6px; color: var(--dark); font-family: 'Cinzel', serif; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; transition: opacity 0.2s; display: none; }
-  #analyzeBtn:hover { opacity: 0.87; }
-  #analyzeBtn:disabled { opacity: 0.5; cursor: not-allowed; }
-  .pills { display: flex; flex-wrap: wrap; gap: 4px; }
-  .pill { font-size: 10px; padding: 3px 9px; border: 1px solid #c8952a44; border-radius: 20px; color: var(--muted); cursor: pointer; font-family: 'Cinzel', serif; letter-spacing: 0.5px; background: transparent; transition: all 0.15s; }
-  .pill:hover, .pill.active { border-color: var(--gold); color: var(--gold); background: #c8952a11; }
+    /* ==================== HEADER ==================== */
+    .header {
+      background: linear-gradient(180deg, #c8952a1a 0%, transparent 100%);
+      border-bottom: 1px solid #c8952a44;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
 
-  .status-box { padding: 11px 14px; border-radius: 7px; border: 1px solid var(--border); background: var(--section-bg); font-size: 13px; color: var(--muted); font-style: italic; text-align: center; margin-bottom: 18px; }
-  .loading { display: none; align-items: center; justify-content: center; gap: 8px; color: var(--gold); font-size: 12px; font-family: 'Cinzel', serif; letter-spacing: 1px; }
-  .spinner { width: 14px; height: 14px; border: 2px solid #c8952a22; border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
+    .header-icon {
+      width: 40px;
+      height: 40px;
+      border: 1px solid #c8952a55;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
 
-  .page-tabs { display: flex; gap: 4px; margin-bottom: 18px; flex-wrap: wrap; }
-  .page-tab { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; padding: 6px 14px; border: 1px solid var(--border); border-radius: 20px; color: var(--muted); cursor: pointer; background: transparent; transition: all 0.2s; }
-  .page-tab:hover { border-color: #c8952a88; color: var(--parchment); }
-  .page-tab.active { border-color: var(--gold); color: var(--gold); background: #c8952a11; }
-  .page-content { display: none; }
-  .page-content.active { display: block; }
+    .logo {
+      font-family: var(--font-cinzel);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      line-height: 1.2;
+    }
 
-  .section-title { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; margin: 0 0 12px; padding-bottom: 7px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
-  .section-dot { display: inline-block; width: 4px; height: 4px; background: var(--gold); border-radius: 50%; flex-shrink: 0; }
-  .section-block { margin-bottom: 20px; }
-  .separator { height: 1px; background: linear-gradient(90deg, transparent, #c8952a22, transparent); margin: 0 0 20px; }
+    .logo small {
+      display: block;
+      font-size: 9px;
+      color: var(--muted);
+      letter-spacing: 3px;
+      font-weight: 400;
+    }
 
-  .sliders-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 32px; margin-bottom: 4px; }
-  .slider-row { display: flex; flex-direction: column; gap: 4px; }
-  .slider-header { display: flex; justify-content: space-between; align-items: center; }
-  .slider-name { font-size: 10px; color: #c8952a88; font-family: 'Cinzel', serif; letter-spacing: 0.5px; }
-  .slider-val { font-size: 11px; color: var(--parchment); font-weight: 600; min-width: 40px; text-align: right; }
-  input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 3px; background: var(--dark2); border-radius: 2px; outline: none; border: none; cursor: pointer; }
-  input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 13px; height: 13px; border-radius: 50%; background: var(--gold); border: 2px solid var(--dark); cursor: pointer; box-shadow: 0 0 5px #c8952a44; }
-  input[type="range"]::-moz-range-thumb { width: 13px; height: 13px; border-radius: 50%; background: var(--gold); border: 2px solid var(--dark); cursor: pointer; }
+    .divider-v {
+      width: 1px;
+      height: 36px;
+      background: #c8952a33;
+      flex-shrink: 0;
+    }
 
-  .select-row { display: flex; flex-direction: column; gap: 4px; }
-  .select-row select { background: var(--dark2); color: var(--parchment); border: 1px solid var(--border); border-radius: 5px; padding: 5px 8px; font-family: 'Crimson Text', serif; font-size: 12px; cursor: pointer; outline: none; }
-  .select-row select:focus { border-color: var(--gold); }
-  .select-label { font-size: 10px; color: #c8952a88; font-family: 'Cinzel', serif; letter-spacing: 0.5px; }
+    .subtitle {
+      font-size: 13px;
+      color: var(--muted);
+      font-style: italic;
+    }
 
-  #copyBtn { margin-top: 16px; width: 100%; padding: 10px; background: transparent; border: 1px solid #c8952a55; border-radius: 6px; color: var(--gold); font-family: 'Cinzel', serif; font-size: 10px; font-weight: 600; letter-spacing: 2px; cursor: pointer; text-transform: uppercase; transition: all 0.2s; }
-  #copyBtn:hover { background: #c8952a11; border-color: var(--gold); }
-  .hint { font-size: 11px; color: var(--very-muted); font-style: italic; text-align: center; margin-top: 8px; }
+    /* ==================== BODY LAYOUT ==================== */
+    .body {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      min-height: 600px;
+    }
 
-  @media (max-width: 700px) {
-    .body { grid-template-columns: 1fr; }
-    .sidebar { border-right: none; border-bottom: 1px solid var(--border); }
-    .sliders-grid { grid-template-columns: 1fr; }
-    .main { max-height: none; }
-  }
-</style>
+    .sidebar {
+      border-right: 1px solid var(--border);
+      padding: 18px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      background: #c8952a04;
+    }
+
+    .main {
+      padding: 20px 24px;
+      overflow-y: auto;
+      max-height: 78vh;
+    }
+
+    /* ==================== LABELS & UPLOAD ==================== */
+    .label {
+      font-family: var(--font-cinzel);
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .upload-zone {
+      border: 1px dashed #c8952a44;
+      border-radius: 8px;
+      padding: 14px;
+      text-align: center;
+      cursor: pointer;
+      background: #c8952a06;
+      min-height: 130px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: border-color 0.2s, background 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .upload-zone:hover {
+      border-color: #c8952a88;
+      background: #c8952a0e;
+    }
+
+    .upload-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+
+    .upload-icon {
+      width: 38px;
+      height: 38px;
+      border: 1px solid #c8952a55;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .upload-text {
+      font-size: 11px;
+      color: var(--muted);
+      font-style: italic;
+      pointer-events: none;
+    }
+
+    .upload-text strong {
+      color: var(--gold);
+      font-style: normal;
+    }
+
+    #previewImg {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 1px solid #c8952a44;
+      display: none;
+    }
+
+    /* ==================== BUTTONS ==================== */
+    .btn {
+      padding: 10px;
+      border-radius: 6px;
+      font-family: var(--font-cinzel);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      width: 100%;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+      color: var(--dark);
+      display: none;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.87;
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid #c8952a55;
+      color: var(--gold);
+      margin-top: 16px;
+    }
+
+    .btn-secondary:hover {
+      background: #c8952a11;
+      border-color: var(--gold);
+    }
+
+    /* ==================== PILLS & TABS ==================== */
+    .pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .pill {
+      font-size: 10px;
+      padding: 3px 9px;
+      border: 1px solid #c8952a44;
+      border-radius: 20px;
+      color: var(--muted);
+      cursor: pointer;
+      font-family: var(--font-cinzel);
+      letter-spacing: 0.5px;
+      background: transparent;
+      transition: all 0.15s;
+    }
+
+    .pill:hover,
+    .pill.active {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: #c8952a11;
+    }
+
+    .page-tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .page-tab {
+      font-family: var(--font-cinzel);
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      color: var(--muted);
+      cursor: pointer;
+      background: transparent;
+      transition: all 0.2s;
+    }
+
+    .page-tab:hover {
+      border-color: #c8952a88;
+      color: var(--parchment);
+    }
+
+    .page-tab.active {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: #c8952a11;
+    }
+
+    .page-content {
+      display: none;
+    }
+
+    .page-content.active {
+      display: block;
+    }
+
+    /* ==================== STATUS & LOADING ==================== */
+    .status-box {
+      padding: 11px 14px;
+      border-radius: 7px;
+      border: 1px solid var(--border);
+      background: var(--section-bg);
+      font-size: 13px;
+      color: var(--muted);
+      font-style: italic;
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    .loading {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: var(--gold);
+      font-size: 12px;
+      font-family: var(--font-cinzel);
+      letter-spacing: 1px;
+    }
+
+    .spinner {
+      width: 14px;
+      height: 14px;
+      border: 2px solid #c8952a22;
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ==================== SECTIONS ==================== */
+    .section-title {
+      font-family: var(--font-cinzel);
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin: 0 0 12px;
+      padding-bottom: 7px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-dot {
+      display: inline-block;
+      width: 4px;
+      height: 4px;
+      background: var(--gold);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .section-block {
+      margin-bottom: 20px;
+    }
+
+    .separator {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #c8952a22, transparent);
+      margin: 0 0 20px;
+    }
+
+    /* ==================== SLIDERS ==================== */
+    .sliders-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 32px;
+      margin-bottom: 4px;
+    }
+
+    .slider-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .slider-name {
+      font-size: 10px;
+      color: #c8952a88;
+      font-family: var(--font-cinzel);
+      letter-spacing: 0.5px;
+    }
+
+    .slider-val {
+      font-size: 11px;
+      color: var(--parchment);
+      font-weight: 600;
+      min-width: 40px;
+      text-align: right;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 3px;
+      background: var(--dark2);
+      border-radius: 2px;
+      outline: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: var(--gold);
+      border: 2px solid var(--dark);
+      cursor: pointer;
+      box-shadow: 0 0 5px #c8952a44;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: var(--gold);
+      border: 2px solid var(--dark);
+      cursor: pointer;
+    }
+
+    /* ==================== SELECT ==================== */
+    .select-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .select-row select {
+      background: var(--dark2);
+      color: var(--parchment);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 5px 8px;
+      font-family: var(--font-crimson);
+      font-size: 12px;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .select-row select:focus {
+      border-color: var(--gold);
+    }
+
+    .select-label {
+      font-size: 10px;
+      color: #c8952a88;
+      font-family: var(--font-cinzel);
+      letter-spacing: 0.5px;
+    }
+
+    /* ==================== HINTS ==================== */
+    .hint {
+      font-size: 11px;
+      color: var(--very-muted);
+      font-style: italic;
+      text-align: center;
+      margin-top: 8px;
+    }
+
+    /* ==================== RESPONSIVE ==================== */
+    @media (max-width: 700px) {
+      .body {
+        grid-template-columns: 1fr;
+      }
+      .sidebar {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+      .sliders-grid {
+        grid-template-columns: 1fr;
+      }
+      .main {
+        max-height: none;
+      }
+    }
+  </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="header">
-    <div class="header-icon">
-      <svg viewBox="0 0 24 24" width="20" height="20" stroke="#c8952a" fill="none" stroke-width="1.5">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v12m0-12l-4 4m4-4l4 4M3 17v2a2 2 0 002 2h14a2 2 0 002-2v-2"/>
-      </svg>
+  <div class="wrap">
+    <!-- HEADER -->
+    <div class="header">
+      <div class="header-icon">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="#c8952a" fill="none" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v12m0-12l-4 4m4-4l4 4M3 17v2a2 2 0 002 2h14a2 2 0 002-2v-2"/>
+        </svg>
+      </div>
+      <div class="logo">Dragon's Dogma II<small>Character Creator Assistant</small></div>
+      <div class="divider-v"></div>
+      <div class="subtitle">Análise facial → Sliders exatos do jogo</div>
     </div>
-    <div class="logo">Dragon's Dogma II<small>Character Creator Assistant</small></div>
-    <div class="divider-v"></div>
-    <div class="subtitle">Análise facial → Sliders exatos do jogo</div>
-  </div>
 
-  <div class="body">
-    <div class="sidebar">
-      <div>
-        <div class="label">Foto de Referência</div>
-        <div class="upload-zone" id="uploadZone">
-          <input type="file" accept="image/*" id="photoInput"/>
-          <div class="upload-icon" id="uploadIcon">
-            <svg viewBox="0 0 24 24" width="18" height="18" stroke="#c8952a" fill="none" stroke-width="1.5">
-              <rect x="3" y="3" width="18" height="18" rx="2"/>
-              <circle cx="8.5" cy="8.5" r="1.5"/>
-              <path stroke-linecap="round" stroke-linejoin="round" d="M21 15l-5-5L5 21"/>
-            </svg>
+    <!-- BODY -->
+    <div class="body">
+      <!-- SIDEBAR -->
+      <div class="sidebar">
+        <!-- Photo Section -->
+        <div>
+          <div class="label">Foto de Referência</div>
+          <div class="upload-zone" id="uploadZone">
+            <input type="file" accept="image/*" id="photoInput"/>
+            <div class="upload-icon" id="uploadIcon">
+              <svg viewBox="0 0 24 24" width="20" height="20" stroke="#c8952a" fill="none" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 1110.233-2.33A4.502 4.502 0 1113.5 19.5"/>
+              </svg>
+            </div>
+            <div class="upload-text" id="uploadText">
+              Clique ou <strong>arraste</strong> uma foto
+            </div>
+            <img id="previewImg" alt="Preview"/>
           </div>
-          <div class="upload-text" id="uploadText"><strong>Envie sua foto</strong><br>ou arraste aqui</div>
+          <button class="btn btn-primary" id="analyzeBtn">🔮 Analisar Rosto</button>
         </div>
-        <img id="previewImg" alt="preview"/>
-      </div>
-      <button id="analyzeBtn">⚔ Analisar Rosto</button>
-      <div>
-        <div class="label">Raça</div>
-        <div class="pills">
-          <button class="pill active" data-r="Human">Human</button>
-          <button class="pill" data-r="Beastren">Beastren</button>
-        </div>
-      </div>
-      <div>
-        <div class="label">Gênero</div>
-        <div class="pills">
-          <button class="pill active" data-g="Masculine">Masculino</button>
-          <button class="pill" data-g="Feminine">Feminino</button>
-        </div>
-      </div>
-      <div>
-        <div class="label">Vocação</div>
-        <div class="pills">
-          <button class="pill active" data-v="Fighter">Fighter</button>
-          <button class="pill" data-v="Archer">Archer</button>
-          <button class="pill" data-v="Mage">Mage</button>
-          <button class="pill" data-v="Thief">Thief</button>
-          <button class="pill" data-v="M.Spearhand">M.Spear</button>
-          <button class="pill" data-v="Sorcerer">Sorcerer</button>
-          <button class="pill" data-v="Warrior">Warrior</button>
-          <button class="pill" data-v="Trickster">Trickster</button>
-        </div>
-      </div>
-    </div>
 
-    <div class="main">
-      <div class="status-box" id="statusBox">
+        <!-- Character Selection -->
+        <div class="separator"></div>
+        <div>
+          <div class="label">Raça</div>
+          <div class="pills" id="racePills"></div>
+        </div>
+        <div>
+          <div class="label">Gênero</div>
+          <div class="pills" id="genderPills"></div>
+        </div>
+        <div>
+          <div class="label">Vocação</div>
+          <div class="pills" id="vocationPills"></div>
+        </div>
+
+        <!-- Status -->
+        <div class="separator"></div>
+        <div class="status-box" id="statusText">Carregue uma foto para começar.</div>
         <div class="loading" id="loadingIndicator">
           <div class="spinner"></div>
-          <span>O Senhor do Dragão analisa o Arisen...</span>
+          <span>Analisando...</span>
         </div>
-        <span id="statusText">Envie uma foto para gerar os sliders automaticamente</span>
       </div>
 
-      <div class="page-tabs">
-        <button class="page-tab active" data-page="body">Corpo</button>
-        <button class="page-tab" data-page="head">Cabeça & Rosto</button>
-        <button class="page-tab" data-page="hair">Cabelo & Pelo</button>
-        <button class="page-tab" data-page="makeup">Maquiagem & Olhos</button>
-        <button class="page-tab" data-page="markings">Marcações</button>
+      <!-- MAIN CONTENT -->
+      <div class="main">
+        <div class="page-tabs" id="pageTabs"></div>
+        <div id="pagesContainer"></div>
+        <button class="btn btn-secondary" id="copyBtn">Copiar Configurações ↗</button>
       </div>
-
-      <!-- CORPO -->
-      <div class="page-content active" id="page-body">
-        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Corpo</div><div class="sliders-grid" id="grid-body_body"></div></div>
-        <div class="separator"></div>
-        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Cabeça (Proporções)</div><div class="sliders-grid" id="grid-body_head"></div></div>
-        <div class="separator"></div>
-        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Parte Superior</div><div class="sliders-grid" id="grid-body_upper"></div></div>
-        <div class="separator"></div>
-        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Parte Inferior</div><div class="sliders-grid" id="grid-body_lower"></div></div>
-        <div class="separator"></div>
-        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Postura</div><div class="sliders-grid" id="grid-body_posture"></div></div>
-      </div>
-
-      <!-- CABEÇA & ROSTO -->
-      <div class="page-content" id="page-head">
-        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Base & Pele</div><div class="sliders-grid" id="grid-head_skin"></div></div>
-        <div class="separator"></div>
-        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Sobrancelhas</div><div class="sliders-grid" id="grid-head_brow"></div></div>
-        <div class="separator"></div>
-        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Olhos (Formato)</div><div class="sliders-grid" id="grid-head_eyes"></div></div>
-        <div class="separator"></div>
-        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Nariz</div><div class="sliders-grid" id="grid-head_nose"></div></div>
-        <div class="separator"></div>
-        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Orelhas</div><div class="sliders-grid" id="grid-head_ears"></div></div>
-        <div class="separator"></div>
-        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Bochechas & Pescoço</div><div class="sliders-grid" id="grid-head_cheeks"></div></div>
-        <div class="separator"></div>
-        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Boca & Lábios</div><div class="sliders-grid" id="grid-head_mouth"></div></div>
-        <div class="separator"></div>
-        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Mandíbula & Queixo</div><div class="sliders-grid" id="grid-head_jaw"></div></div>
-      </div>
-
-      <!-- CABELO -->
-      <div class="page-content" id="page-hair">
-        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Cabelo</div><div class="sliders-grid" id="grid-hair_hair"></div></div>
-        <div class="separator"></div>
-        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Sobrancelhas (Cor & Espessura)</div><div class="sliders-grid" id="grid-hair_eyebrows"></div></div>
-        <div class="separator"></div>
-        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Barba / Pelo Facial</div><div class="sliders-grid" id="grid-hair_facial"></div></div>
-        <div class="separator"></div>
-        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Pelo Corporal</div><div class="sliders-grid" id="grid-hair_body"></div></div>
-      </div>
-
-      <!-- MAQUIAGEM -->
-      <div class="page-content" id="page-makeup">
-        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Globo Ocular & Íris</div><div class="sliders-grid" id="grid-makeup_eyeball"></div></div>
-        <div class="separator"></div>
-        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Cílios</div><div class="sliders-grid" id="grid-makeup_eyelashes"></div></div>
-        <div class="separator"></div>
-        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Sombra</div><div class="sliders-grid" id="grid-makeup_eyeshadow"></div></div>
-        <div class="separator"></div>
-        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Delineador</div><div class="sliders-grid" id="grid-makeup_eyeliner"></div></div>
-        <div class="separator"></div>
-        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Sardas</div><div class="sliders-grid" id="grid-makeup_freckles"></div></div>
-        <div class="separator"></div>
-        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Blush (Bochecha)</div><div class="sliders-grid" id="grid-makeup_cheek"></div></div>
-        <div class="separator"></div>
-        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Batom</div><div class="sliders-grid" id="grid-makeup_lips"></div></div>
-        <div class="separator"></div>
-        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Dentes</div><div class="sliders-grid" id="grid-makeup_teeth"></div></div>
-      </div>
-
-      <!-- MARCAÇÕES -->
-      <div class="page-content" id="page-markings">
-        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Tatuagem Corporal</div><div class="sliders-grid" id="grid-tattoo_body"></div></div>
-        <div class="separator"></div>
-        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Cicatrizes</div><div class="sliders-grid" id="grid-scars"></div></div>
-        <div class="separator"></div>
-        <div class="section-block"><div class="section-title"><span class="section-dot"></span>Sujeira</div><div class="sliders-grid" id="grid-dirt"></div></div>
-      </div>
-
-      <button id="copyBtn">Copiar Configurações ↗</button>
-      <div class="hint">Sliders com nomes e intervalos idênticos ao jogo. Valores "select" representam presets numerados (#1, #2…).</div>
     </div>
   </div>
-</div>
 
-<script>
-// Exact DD2 slider definitions from community .ini presets (Mx772 auto-slider tool + Steam guides)
-const SLIDER_DEFS = {
-  'body_body': [
-    {id:'height',         name:'Altura',                  min:140, max:220, val:170, unit:'cm'},
-    {id:'torso',          name:'Comprimento do Torso',    min:-100,max:100,  val:0},
-    {id:'muscle_style',   name:'Estilo Muscular',         min:0,   max:31,   val:7,  isSelect:true},
-    {id:'muscle_strength',name:'Força Muscular',          min:-100,max:100,  val:0},
-    {id:'traps',          name:'Trapézio',                min:-100,max:100,  val:0},
-    {id:'upper_mass',     name:'Massa Superior',          min:-100,max:100,  val:0},
-    {id:'lower_mass',     name:'Massa Inferior',          min:-100,max:100,  val:0},
-    {id:'upper_size',     name:'Tamanho Superior',        min:-100,max:100,  val:0},
-    {id:'lower_size',     name:'Tamanho Inferior',        min:-100,max:100,  val:0},
-  ],
-  'body_head': [
-    {id:'head_size',      name:'Tamanho da Cabeça',       min:-100,max:100,  val:0},
-    {id:'head_length',    name:'Comprimento da Cabeça',   min:-100,max:100,  val:0},
-    {id:'head_width',     name:'Largura da Cabeça',       min:-100,max:100,  val:0},
-    {id:'head_depth',     name:'Profundidade da Cabeça',  min:-100,max:100,  val:0},
-    {id:'face_height',    name:'Altura do Rosto',         min:-100,max:100,  val:0},
-    {id:'neck_length',    name:'Comprimento do Pescoço',  min:-100,max:100,  val:0},
-    {id:'neck_thickness', name:'Espessura do Pescoço',    min:-100,max:100,  val:0},
-  ],
-  'body_upper': [
-    {id:'shoulder_width',      name:'Largura dos Ombros',     min:-100,max:100,val:0},
-    {id:'shoulder_size',       name:'Tamanho dos Ombros',     min:-100,max:100,val:0},
-    {id:'chest_thickness',     name:'Espessura do Peito',     min:-100,max:100,val:0},
-    {id:'chest_size',          name:'Tamanho do Peito',       min:-100,max:100,val:0},
-    {id:'torso_width',         name:'Largura do Tronco',      min:-100,max:100,val:0},
-    {id:'torso_depth',         name:'Profundidade do Tronco', min:-100,max:100,val:0},
-    {id:'arm_length',          name:'Comprimento dos Braços', min:-100,max:100,val:0},
-    {id:'arm_size',            name:'Tamanho dos Braços',     min:-100,max:100,val:0},
-    {id:'upper_arm_thickness', name:'Esp. Braço Superior',    min:-100,max:100,val:0},
-    {id:'forearm_thickness',   name:'Esp. Antebraço',         min:-100,max:100,val:0},
-  ],
-  'body_lower': [
-    {id:'waist_width',    name:'Largura da Cintura',      min:-100,max:100,val:0},
-    {id:'waist_size',     name:'Tamanho da Cintura',      min:-100,max:100,val:0},
-    {id:'rear_size',      name:'Tamanho do Traseiro',     min:-100,max:100,val:0},
-    {id:'leg_size',       name:'Tamanho das Pernas',      min:-100,max:100,val:0},
-    {id:'thigh_size',     name:'Tamanho das Coxas',       min:-100,max:100,val:0},
-    {id:'calf_size',      name:'Tamanho das Panturrilhas',min:-100,max:100,val:0},
-  ],
-  'body_posture': [
-    {id:'movement_style', name:'Estilo de Movimento',     min:0,   max:100, val:0},
-    {id:'elbow_angle',    name:'Ângulo dos Cotovelos',    min:-100,max:100,  val:0},
-    {id:'knee_angle',     name:'Ângulo dos Joelhos',      min:-100,max:100,  val:0},
-    {id:'posture',        name:'Postura (Ereta↔Curvada)', min:-100,max:100,  val:0},
-  ],
+  <!-- ==================== ARCHITECTURE LAYERS ==================== -->
+  <!-- Layer 1: Domain (Business Logic & Data Models) -->
+  <script>
+    /**
+     * DOMAIN LAYER
+     * Contains business logic and data models independent of UI/API
+     */
 
-  // HEAD
-  'head_skin': [
-    {id:'base_head',      name:'Base da Cabeça (#1–32)',  min:1,  max:32,  val:4,  isSelect:true},
-    {id:'base_skin',      name:'Base da Pele (#1–32)',    min:1,  max:32,  val:11, isSelect:true},
-    {id:'skin_color',     name:'Tom da Pele (#1–31)',     min:1,  max:31,  val:13, isSelect:true},
-    {id:'wrinkles',       name:'Rugas',                  min:0,  max:100, val:0},
-    {id:'skin_sheen',     name:'Brilho da Pele',         min:0,  max:100, val:14},
-  ],
-  'head_brow': [
-    {id:'brow_height',        name:'Altura',              min:-100,max:100,val:0},
-    {id:'brow_spacing',       name:'Espaçamento',         min:-100,max:100,val:0},
-    {id:'brow_depth_overall', name:'Profundidade Geral',  min:-100,max:100,val:0},
-    {id:'brow_depth_inner',   name:'Profundidade Interna',min:-100,max:100,val:0},
-    {id:'brow_depth_outer',   name:'Profundidade Externa',min:-100,max:100,val:0},
-    {id:'brow_angle',         name:'Ângulo',              min:-100,max:100,val:0},
-    {id:'brow_bend',          name:'Curvatura',           min:-100,max:100,val:0},
-  ],
-  'head_eyes': [
-    {id:'eye_height',     name:'Altura',                  min:-100,max:100,val:0},
-    {id:'eye_width',      name:'Largura',                 min:-100,max:100,val:0},
-    {id:'eye_depth',      name:'Profundidade',            min:-100,max:100,val:0},
-    {id:'eye_size',       name:'Tamanho',                 min:-100,max:100,val:0},
-    {id:'eye_angle',      name:'Ângulo',                  min:-100,max:100,val:0},
-    {id:'left_closed',    name:'Fechado (Esq.)',          min:0,  max:100, val:0},
-    {id:'squint_left',    name:'Semicerrado (Esq.)',      min:0,  max:100, val:0},
-    {id:'right_closed',   name:'Fechado (Dir.)',          min:0,  max:100, val:0},
-    {id:'squint_right',   name:'Semicerrado (Dir.)',      min:0,  max:100, val:0},
-  ],
-  'head_nose': [
-    {id:'nose_length',        name:'Comprimento do Nariz',    min:-100,max:100,val:0},
-    {id:'bridge_width',       name:'Largura da Ponte',        min:-100,max:100,val:0},
-    {id:'bridge_height',      name:'Altura da Ponte',         min:-100,max:100,val:0},
-    {id:'bridge_bump_overall',name:'Saliência Geral',         min:-100,max:100,val:0},
-    {id:'bridge_bump_upper',  name:'Saliência Superior',      min:-100,max:100,val:0},
-    {id:'bridge_bump_lower',  name:'Saliência Inferior',      min:-100,max:100,val:0},
-    {id:'nostril_size',       name:'Tamanho das Narinas',     min:-100,max:100,val:0},
-    {id:'nostril_height',     name:'Altura das Narinas',      min:-100,max:100,val:0},
-    {id:'nostril_width',      name:'Largura das Narinas',     min:-100,max:100,val:0},
-    {id:'tip_depth',          name:'Profundidade da Ponta',   min:-100,max:100,val:0},
-    {id:'tip_angle',          name:'Ângulo da Ponta',         min:-100,max:100,val:0},
-    {id:'tip_sharpness',      name:'Afilamento da Ponta',     min:-100,max:100,val:0},
-  ],
-  'head_ears': [
-    {id:'ear_style',      name:'Estilo (#0–5)',            min:0,  max:5,   val:0,  isSelect:true},
-    {id:'ear_size',       name:'Tamanho',                 min:-100,max:100,val:0},
-    {id:'ear_angle',      name:'Ângulo',                  min:-100,max:100,val:0},
-    {id:'ear_openness',   name:'Abertura',                min:-100,max:100,val:0},
-    {id:'ear_tilt',       name:'Inclinação',              min:-100,max:100,val:0},
-    {id:'ear_tips',       name:'Pontas',                  min:-100,max:100,val:0},
-    {id:'ear_lobes',      name:'Lóbulos',                 min:-100,max:100,val:0},
-  ],
-  'head_cheeks': [
-    {id:'cheek_thickness',name:'Espessura',               min:-100,max:100,val:0},
-    {id:'cheek_bulge',    name:'Protuberância',           min:-100,max:100,val:0},
-    {id:'neck_fat',       name:'Gordura no Pescoço',      min:-100,max:100,val:0},
-    {id:'cheek_height',   name:'Altura',                  min:-100,max:100,val:0},
-    {id:'cheek_width',    name:'Largura',                 min:-100,max:100,val:0},
-    {id:'cheek_depth',    name:'Profundidade',            min:-100,max:100,val:0},
-  ],
-  'head_mouth': [
-    {id:'mouth_height',       name:'Altura',              min:-100,max:100,val:0},
-    {id:'mouth_width',        name:'Largura',             min:-100,max:100,val:0},
-    {id:'mouth_protrusion',   name:'Protrusão',           min:-100,max:100,val:0},
-    {id:'mouth_corners',      name:'Cantos da Boca',      min:-100,max:100,val:0},
-    {id:'lip_thickness',      name:'Espessura dos Lábios',min:-100,max:100,val:0},
-    {id:'lower_lip_position', name:'Posição Lábio Inferior',min:-100,max:100,val:0},
-  ],
-  'head_jaw': [
-    {id:'jaw_definition',  name:'Definição da Mandíbula', min:-100,max:100,val:0},
-    {id:'jaw_width',       name:'Largura da Mandíbula',   min:-100,max:100,val:0},
-    {id:'jaw_position',    name:'Posição da Mandíbula',   min:-100,max:100,val:0},
-    {id:'jaw_protrusion',  name:'Protrusão da Mandíbula', min:-100,max:100,val:0},
-    {id:'chin_height',     name:'Altura do Queixo',       min:-100,max:100,val:0},
-    {id:'chin_width',      name:'Largura do Queixo',      min:-100,max:100,val:0},
-    {id:'chin_protrusion', name:'Protrusão do Queixo',    min:-100,max:100,val:0},
-    {id:'chin_sharpness',  name:'Afilamento do Queixo',   min:-100,max:100,val:0},
-  ],
+    // Character Configuration Model
+    class CharacterConfig {
+      constructor() {
+        this.race = 'Human';
+        this.gender = 'Male';
+        this.vocation = 'Fighter';
+        this.sliders = {};
+      }
 
-  // HAIR
-  'hair_hair': [
-    {id:'hairstyle',      name:'Penteado (#1–60)',         min:1,  max:60,  val:1,  isSelect:true},
-    {id:'root_color',     name:'Cor da Raiz (#1–120)',     min:1,  max:120, val:28, isSelect:true},
-    {id:'tip_color',      name:'Cor da Ponta (#1–120)',    min:1,  max:120, val:28, isSelect:true},
-    {id:'root_blend',     name:'Mistura Raiz/Ponta',       min:0,  max:100, val:50},
-    {id:'sheen_position', name:'Posição do Brilho',        min:0,  max:100, val:50},
-    {id:'sheen',          name:'Intensidade do Brilho',    min:0,  max:100, val:20},
-  ],
-  'hair_eyebrows': [
-    {id:'eyebrow_shape',     name:'Formato (#1–20)',       min:1,  max:20,  val:1,  isSelect:true},
-    {id:'eyebrow_color',     name:'Cor (#1–120)',          min:1,  max:120, val:28, isSelect:true},
-    {id:'eyebrow_thickness', name:'Espessura',             min:0,  max:100, val:50},
-  ],
-  'hair_facial': [
-    {id:'facial_style',     name:'Estilo (#1–30)',         min:1,  max:30,  val:1,  isSelect:true},
-    {id:'facial_color',     name:'Cor da Raiz (#1–120)',   min:1,  max:120, val:1,  isSelect:true},
-    {id:'facial_tip_color', name:'Cor da Ponta (#1–120)',  min:1,  max:120, val:1,  isSelect:true},
-    {id:'facial_root_blend',name:'Mistura Raiz/Ponta',     min:0,  max:100, val:50},
-    {id:'facial_sheen_pos', name:'Posição do Brilho',      min:0,  max:100, val:50},
-    {id:'facial_sheen',     name:'Intensidade do Brilho',  min:0,  max:100, val:13},
-  ],
-  'hair_body': [
-    {id:'body_hair_style',   name:'Estilo (#1–10)',        min:1,  max:10,  val:1,  isSelect:true},
-    {id:'body_hair_color',   name:'Cor (#1–120)',          min:1,  max:120, val:28, isSelect:true},
-    {id:'body_hair_density', name:'Densidade',             min:0,  max:100, val:0},
-  ],
+      setSliderValue(sliderId, value) {
+        this.sliders[sliderId] = value;
+      }
 
-  // MAKEUP
-  'makeup_eyeball': [
-    {id:'eye_style',      name:'Estilo do Olho (#1–20)',   min:1,  max:20,  val:1,  isSelect:true},
-    {id:'iris_primary',   name:'Cor Primária Íris (#1–200)',min:1, max:200, val:64, isSelect:true},
-    {id:'iris_secondary', name:'Cor Secundária (#1–200)',  min:1,  max:200, val:141,isSelect:true},
-    {id:'iris_tertiary',  name:'Cor Terciária (#1–200)',   min:1,  max:200, val:120,isSelect:true},
-    {id:'sclera_color',   name:'Cor da Esclera (#1–200)',  min:1,  max:200, val:107,isSelect:true},
-    {id:'iris_size',      name:'Tamanho da Íris',          min:-100,max:100,val:0},
-    {id:'pupil_size',     name:'Tamanho da Pupila',        min:-100,max:100,val:0},
-  ],
-  'makeup_eyelashes': [
-    {id:'eyelash_shape',     name:'Formato (#1–20)',       min:1,  max:20,  val:1,  isSelect:true},
-    {id:'eyelash_root_color',name:'Cor da Raiz (#1–120)',  min:1,  max:120, val:1,  isSelect:true},
-    {id:'eyelash_tip_color', name:'Cor da Ponta (#1–120)', min:1,  max:120, val:8,  isSelect:true},
-    {id:'root_tip_blend',    name:'Mistura Raiz/Ponta',    min:0,  max:100, val:50},
-    {id:'eyelash_length',    name:'Comprimento',           min:0,  max:100, val:50},
-    {id:'eyelash_density',   name:'Densidade',             min:0,  max:100, val:16},
-  ],
-  'makeup_eyeshadow': [
-    {id:'eyeshadow_style',   name:'Estilo (#1–20)',        min:1,  max:20,  val:1,  isSelect:true},
-    {id:'eyeshadow_color1',  name:'Cor 1 (#1–200)',        min:1,  max:200, val:1,  isSelect:true},
-    {id:'eyeshadow_color2',  name:'Cor 2 (#1–200)',        min:1,  max:200, val:1,  isSelect:true},
-    {id:'eyeshadow_intensity',name:'Intensidade',          min:0,  max:100, val:0},
-    {id:'eyeshadow_coverage',name:'Cobertura',             min:0,  max:100, val:100},
-    {id:'eyeshadow_opacity', name:'Opacidade',             min:0,  max:100, val:0},
-    {id:'eyeshadow_metallic',name:'Metálico',              min:0,  max:100, val:0},
-    {id:'eyeshadow_sheen',   name:'Brilho',                min:0,  max:100, val:50},
-  ],
-  'makeup_eyeliner': [
-    {id:'eyeliner_style',    name:'Estilo (#1–20)',        min:1,  max:20,  val:1,  isSelect:true},
-    {id:'eyeliner_color',    name:'Cor (#1–200)',          min:1,  max:200, val:1,  isSelect:true},
-    {id:'eyeliner_coverage', name:'Cobertura',             min:0,  max:100, val:0},
-    {id:'eyeliner_opacity',  name:'Opacidade',             min:0,  max:100, val:0},
-    {id:'eyeliner_metallic', name:'Metálico',              min:0,  max:100, val:0},
-    {id:'eyeliner_sheen',    name:'Brilho',                min:0,  max:100, val:50},
-  ],
-  'makeup_freckles': [
-    {id:'freckles_type',     name:'Tipo (#1–10)',          min:1,  max:10,  val:1,  isSelect:true},
-    {id:'freckles_color',    name:'Cor (#1–120)',          min:1,  max:120, val:1,  isSelect:true},
-    {id:'freckle_opacity',   name:'Opacidade',             min:0,  max:100, val:0},
-  ],
-  'makeup_cheek': [
-    {id:'cheek_style',       name:'Estilo (#1–10)',        min:1,  max:10,  val:1,  isSelect:true},
-    {id:'cheek_color_m',     name:'Cor (#1–200)',          min:1,  max:200, val:1,  isSelect:true},
-    {id:'cheek_opacity',     name:'Opacidade',             min:0,  max:100, val:0},
-    {id:'cheek_metallic',    name:'Metálico',              min:0,  max:100, val:0},
-    {id:'cheek_sheen',       name:'Brilho',                min:0,  max:100, val:50},
-  ],
-  'makeup_lips': [
-    {id:'lip_style',         name:'Estilo (#1–20)',        min:1,  max:20,  val:1,  isSelect:true},
-    {id:'lip_color',         name:'Cor (#1–200)',          min:1,  max:200, val:1,  isSelect:true},
-    {id:'lip_color_spread',  name:'Spread da Cor',         min:0,  max:100, val:0},
-    {id:'lip_opacity',       name:'Opacidade',             min:0,  max:100, val:0},
-    {id:'lip_metallic',      name:'Metálico',              min:0,  max:100, val:0},
-    {id:'lip_sheen',         name:'Brilho',                min:0,  max:100, val:50},
-  ],
-  'makeup_teeth': [
-    {id:'upper_teeth',       name:'Dentes Superiores',    min:0,  max:8,   val:0},
-    {id:'lower_teeth',       name:'Dentes Inferiores',    min:0,  max:8,   val:0},
-    {id:'teeth_color',       name:'Cor dos Dentes (#1–20)',min:1, max:20,  val:7,  isSelect:true},
-  ],
+      getSliderValue(sliderId) {
+        return this.sliders[sliderId] || 0;
+      }
 
-  // MARKINGS
-  'tattoo_body': [
-    {id:'body_tattoo_style',          name:'Estilo (#1–100)',        min:1,  max:100, val:1,  isSelect:true},
-    {id:'body_tattoo_primary_color',  name:'Cor Primária (#1–200)',  min:1,  max:200, val:1,  isSelect:true},
-    {id:'body_tattoo_secondary_color',name:'Cor Secundária (#1–200)',min:1,  max:200, val:1,  isSelect:true},
-    {id:'body_tattoo_vertical_pos',   name:'Posição Vertical',       min:-100,max:100,val:0},
-    {id:'body_tattoo_horizontal_pos', name:'Posição Horizontal',     min:-100,max:100,val:0},
-    {id:'body_tattoo_rotation',       name:'Rotação',                min:-100,max:100,val:0},
-    {id:'body_tattoo_overall_scale',  name:'Escala Geral',           min:0,  max:200, val:25},
-    {id:'body_tattoo_opacity',        name:'Opacidade',              min:0,  max:100, val:100},
-    {id:'body_tattoo_metallic',       name:'Metálico',               min:0,  max:100, val:0},
-    {id:'body_tattoo_sheen',          name:'Brilho',                 min:0,  max:100, val:50},
-  ],
-  'scars': [
-    {id:'body_scar_style',   name:'Estilo Cicatriz (#1–30)', min:1,  max:30,  val:1, isSelect:true},
-    {id:'body_scar_color',   name:'Cor (#1–120)',             min:1,  max:120, val:1, isSelect:true},
-    {id:'body_scar_vert_pos',name:'Posição Vertical',         min:-100,max:100,val:0},
-    {id:'body_scar_horz_pos',name:'Posição Horizontal',       min:-100,max:100,val:0},
-    {id:'body_scar_rotation',name:'Rotação',                  min:-100,max:100,val:0},
-    {id:'body_scar_scale',   name:'Escala',                   min:0,  max:200, val:25},
-    {id:'body_scar_opacity', name:'Opacidade',                min:0,  max:100, val:100},
-  ],
-  'dirt': [
-    {id:'dirt_style',    name:'Estilo Sujeira (#1–10)', min:1, max:10,  val:1, isSelect:true},
-    {id:'dirt_color',    name:'Cor (#1–120)',            min:1, max:120, val:1, isSelect:true},
-    {id:'dirt_opacity',  name:'Opacidade',               min:0, max:100, val:0},
-  ],
-};
+      toJSON() {
+        return {
+          race: this.race,
+          gender: this.gender,
+          vocation: this.vocation,
+          sliders: { ...this.sliders }
+        };
+      }
 
-// State
-let vals = {};
-Object.values(SLIDER_DEFS).forEach(sliders => sliders.forEach(s => { vals[s.id] = s.val; }));
-let race = 'Human', gender = 'Masculine', vocation = 'Fighter';
-let imgB64 = null, imgMime = 'image/jpeg', hasImg = false;
-
-// Build UI
-function buildSection(gridId, sliders) {
-  const el = document.getElementById('grid-' + gridId);
-  if (!el) return;
-  el.innerHTML = '';
-  sliders.forEach(s => {
-    const v = vals[s.id];
-    const row = document.createElement('div');
-    if (s.isSelect) {
-      row.className = 'select-row';
-      let opts = '';
-      for (let i = s.min; i <= s.max; i++) opts += `<option value="${i}"${i===v?' selected':''}>#${i}</option>`;
-      row.innerHTML = `<span class="select-label">${s.name}</span><select id="sl_${s.id}">${opts}</select>`;
-      el.appendChild(row);
-      row.querySelector('select').addEventListener('change', e => { vals[s.id] = +e.target.value; });
-    } else {
-      row.className = 'slider-row';
-      const u = s.unit ? ' ' + s.unit : '';
-      row.innerHTML = `<div class="slider-header"><span class="slider-name">${s.name}</span><span class="slider-val" id="v_${s.id}">${v}${u}</span></div><input type="range" min="${s.min}" max="${s.max}" value="${v}" id="sl_${s.id}"/>`;
-      el.appendChild(row);
-      row.querySelector('input').addEventListener('input', e => {
-        vals[s.id] = +e.target.value;
-        document.getElementById('v_' + s.id).textContent = e.target.value + u;
-      });
+      fromJSON(data) {
+        this.race = data.race || 'Human';
+        this.gender = data.gender || 'Male';
+        this.vocation = data.vocation || 'Fighter';
+        this.sliders = { ...data.sliders };
+      }
     }
-  });
-}
 
-function buildAll() {
-  Object.entries(SLIDER_DEFS).forEach(([k]) => buildSection(k, SLIDER_DEFS[k]));
-}
+    // Slider Definitions
+    const SLIDER_DEFINITIONS = {
+      body_body: [
+        { id: 'height', name: 'Altura', min: 140, max: 220 },
+        { id: 'torso', name: 'Torso', min: -100, max: 100 },
+        { id: 'muscle_strength', name: 'Força Muscular', min: -100, max: 100 },
+        { id: 'traps', name: 'Trapézios', min: -100, max: 100 },
+        { id: 'upper_mass', name: 'Massa Superior', min: -100, max: 100 },
+        { id: 'lower_mass', name: 'Massa Inferior', min: -100, max: 100 },
+        { id: 'upper_size', name: 'Tamanho Superior', min: -100, max: 100 },
+        { id: 'lower_size', name: 'Tamanho Inferior', min: -100, max: 100 },
+      ],
+      body_head: [
+        { id: 'head_size', name: 'Tamanho da Cabeça', min: -100, max: 100 },
+        { id: 'head_length', name: 'Comprimento da Cabeça', min: -100, max: 100 },
+        { id: 'head_width', name: 'Largura da Cabeça', min: -100, max: 100 },
+        { id: 'head_depth', name: 'Profundidade da Cabeça', min: -100, max: 100 },
+        { id: 'face_height', name: 'Altura do Rosto', min: -100, max: 100 },
+        { id: 'neck_length', name: 'Comprimento do Pescoço', min: -100, max: 100 },
+        { id: 'neck_thickness', name: 'Espessura do Pescoço', min: -100, max: 100 },
+      ],
+      body_upper: [
+        { id: 'shoulder_width', name: 'Largura dos Ombros', min: -100, max: 100 },
+        { id: 'chest_thickness', name: 'Espessura do Peito', min: -100, max: 100 },
+        { id: 'chest_size', name: 'Tamanho do Peito', min: -100, max: 100 },
+        { id: 'torso_width', name: 'Largura do Torso', min: -100, max: 100 },
+        { id: 'arm_size', name: 'Tamanho dos Braços', min: -100, max: 100 },
+      ],
+      body_lower: [
+        { id: 'waist_width', name: 'Largura da Cintura', min: -100, max: 100 },
+        { id: 'rear_size', name: 'Tamanho do Traseiro', min: -100, max: 100 },
+        { id: 'leg_size', name: 'Tamanho das Pernas', min: -100, max: 100 },
+        { id: 'thigh_size', name: 'Tamanho da Coxa', min: -100, max: 100 },
+        { id: 'calf_size', name: 'Tamanho da Panturrilha', min: -100, max: 100 },
+      ],
+      body_posture: [
+        { id: 'posture', name: 'Postura', min: -100, max: 100 },
+      ],
+      head_skin: [
+        { id: 'skin_color', name: 'Cor da Pele', min: 1, max: 31 },
+        { id: 'wrinkles', name: 'Rugas', min: 0, max: 100 },
+        { id: 'skin_sheen', name: 'Brilho da Pele', min: 0, max: 100 },
+      ],
+      head_brow: [
+        { id: 'brow_height', name: 'Altura da Sobrancelha', min: -100, max: 100 },
+        { id: 'brow_spacing', name: 'Espaçamento', min: -100, max: 100 },
+        { id: 'brow_depth_overall', name: 'Profundidade', min: -100, max: 100 },
+        { id: 'brow_angle', name: 'Ângulo', min: -100, max: 100 },
+        { id: 'brow_bend', name: 'Dobra', min: -100, max: 100 },
+      ],
+      head_eyes: [
+        { id: 'eye_height', name: 'Altura dos Olhos', min: -100, max: 100 },
+        { id: 'eye_width', name: 'Largura dos Olhos', min: -100, max: 100 },
+        { id: 'eye_depth', name: 'Profundidade dos Olhos', min: -100, max: 100 },
+        { id: 'eye_size', name: 'Tamanho dos Olhos', min: -100, max: 100 },
+        { id: 'eye_angle', name: 'Ângulo dos Olhos', min: -100, max: 100 },
+        { id: 'squint_left', name: 'Séziamos Esquerdo', min: 0, max: 100 },
+        { id: 'squint_right', name: 'Séziamos Direito', min: 0, max: 100 },
+      ],
+      head_nose: [
+        { id: 'nose_length', name: 'Comprimento do Nariz', min: -100, max: 100 },
+        { id: 'bridge_width', name: 'Largura da Ponte', min: -100, max: 100 },
+        { id: 'bridge_height', name: 'Altura da Ponte', min: -100, max: 100 },
+        { id: 'bridge_bump_overall', name: 'Giba da Ponte', min: -100, max: 100 },
+        { id: 'nostril_size', name: 'Tamanho da Narina', min: -100, max: 100 },
+        { id: 'nostril_width', name: 'Largura da Narina', min: -100, max: 100 },
+        { id: 'tip_depth', name: 'Profundidade da Ponta', min: -100, max: 100 },
+        { id: 'tip_angle', name: 'Ângulo da Ponta', min: -100, max: 100 },
+        { id: 'tip_sharpness', name: 'Agudeza da Ponta', min: -100, max: 100 },
+      ],
+      head_ears: [
+        { id: 'ear_size', name: 'Tamanho das Orelhas', min: -100, max: 100 },
+        { id: 'ear_angle', name: 'Ângulo das Orelhas', min: -100, max: 100 },
+      ],
+      head_cheeks: [
+        { id: 'cheek_thickness', name: 'Espessura das Bochechas', min: -100, max: 100 },
+        { id: 'cheek_bulge', name: 'Inchaço das Bochechas', min: -100, max: 100 },
+        { id: 'neck_fat', name: 'Gordura do Pescoço', min: -100, max: 100 },
+        { id: 'cheek_height', name: 'Altura das Bochechas', min: -100, max: 100 },
+        { id: 'cheek_width', name: 'Largura das Bochechas', min: -100, max: 100 },
+        { id: 'cheek_depth', name: 'Profundidade das Bochechas', min: -100, max: 100 },
+      ],
+      head_mouth: [
+        { id: 'mouth_height', name: 'Altura da Boca', min: -100, max: 100 },
+        { id: 'mouth_width', name: 'Largura da Boca', min: -100, max: 100 },
+        { id: 'mouth_protrusion', name: 'Protrusão da Boca', min: -100, max: 100 },
+        { id: 'mouth_corners', name: 'Cantos da Boca', min: -100, max: 100 },
+        { id: 'lip_thickness', name: 'Espessura dos Lábios', min: -100, max: 100 },
+        { id: 'lower_lip_position', name: 'Posição do Lábio Inferior', min: -100, max: 100 },
+      ],
+      head_jaw: [
+        { id: 'jaw_definition', name: 'Definição da Mandíbula', min: -100, max: 100 },
+        { id: 'jaw_width', name: 'Largura da Mandíbula', min: -100, max: 100 },
+        { id: 'jaw_position', name: 'Posição da Mandíbula', min: -100, max: 100 },
+        { id: 'jaw_protrusion', name: 'Protrusão da Mandíbula', min: -100, max: 100 },
+        { id: 'chin_height', name: 'Altura do Queixo', min: -100, max: 100 },
+        { id: 'chin_width', name: 'Largura do Queixo', min: -100, max: 100 },
+        { id: 'chin_protrusion', name: 'Protrusão do Queixo', min: -100, max: 100 },
+        { id: 'chin_sharpness', name: 'Agudeza do Queixo', min: -100, max: 100 },
+      ],
+      hair_hair: [
+        { id: 'root_color', name: 'Cor da Raiz', min: 1, max: 120 },
+        { id: 'tip_color', name: 'Cor da Ponta', min: 1, max: 120 },
+      ],
+      hair_eyebrows: [
+        { id: 'eyebrow_color', name: 'Cor das Sobrancelhas', min: 1, max: 120 },
+      ],
+      makeup_eyeball: [
+        { id: 'iris_primary', name: 'Cor da Íris', min: 1, max: 200 },
+        { id: 'sclera_color', name: 'Cor da Esclerótica', min: 1, max: 200 },
+      ],
+    };
 
-function applyVals(parsed) {
-  Object.keys(parsed).forEach(k => {
-    if (!(k in vals)) return;
-    vals[k] = parsed[k];
-    const sl = document.getElementById('sl_' + k);
-    const vEl = document.getElementById('v_' + k);
-    if (!sl) return;
-    sl.value = parsed[k];
-    if (vEl) vEl.textContent = parsed[k];
-  });
-}
+    const CHARACTER_OPTIONS = {
+      races: ['Human', 'Elf', 'Dwarf', 'Halfling'],
+      genders: ['Male', 'Female'],
+      vocations: ['Fighter', 'Rogue', 'Mage', 'Cleric', 'Ranger', 'Mystic Knight', 'Warfarer', 'Sorcerer']
+    };
 
-// Tabs
-document.querySelectorAll('.page-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
-    tab.classList.add('active');
-    document.getElementById('page-' + tab.dataset.page).classList.add('active');
-  });
-});
+    // Shared state
+    const characterConfig = new CharacterConfig();
+    let photoData = { base64: '', mime: '' };
+  </script>
 
-// Pills
-document.querySelectorAll('.pill[data-r]').forEach(p => p.onclick = () => { document.querySelectorAll('.pill[data-r]').forEach(x=>x.classList.remove('active')); p.classList.add('active'); race=p.dataset.r; });
-document.querySelectorAll('.pill[data-g]').forEach(p => p.onclick = () => { document.querySelectorAll('.pill[data-g]').forEach(x=>x.classList.remove('active')); p.classList.add('active'); gender=p.dataset.g; });
-document.querySelectorAll('.pill[data-v]').forEach(p => p.onclick = () => { document.querySelectorAll('.pill[data-v]').forEach(x=>x.classList.remove('active')); p.classList.add('active'); vocation=p.dataset.v; });
+  <!-- Layer 2: Repository (API & Data Access) -->
+  <script>
+    /**
+     * REPOSITORY LAYER
+     * Handles external API calls and data fetching
+     */
 
-// Photo
-document.getElementById('photoInput').addEventListener('change', e => {
-  const file = e.target.files[0]; if (!file) return;
-  imgMime = ['image/jpeg','image/png','image/gif','image/webp'].includes(file.type)?file.type:'image/jpeg';
-  const reader = new FileReader();
-  reader.onload = ev => {
-    imgB64 = ev.target.result.split(',')[1];
-    document.getElementById('previewImg').src = ev.target.result;
-    document.getElementById('previewImg').style.display = 'block';
-    document.getElementById('uploadIcon').style.display = 'none';
-    document.getElementById('uploadText').style.display = 'none';
-    document.getElementById('analyzeBtn').style.display = 'block';
-    hasImg = true;
-    document.getElementById('loadingIndicator').style.display = 'none';
-    document.getElementById('statusText').style.display = 'block';
-    document.getElementById('statusText').textContent = 'Foto carregada! Clique em "Analisar Rosto".';
-  };
-  reader.readAsDataURL(file);
-});
-const zone = document.getElementById('uploadZone');
-zone.addEventListener('dragover', e=>{e.preventDefault();zone.style.borderColor='#c8952a';});
-zone.addEventListener('dragleave', ()=>zone.style.borderColor='');
-zone.addEventListener('drop', e=>{
-  e.preventDefault();zone.style.borderColor='';
-  const file=e.dataTransfer.files[0];if(!file)return;
-  const dt=new DataTransfer();dt.items.add(file);
-  document.getElementById('photoInput').files=dt.files;
-  document.getElementById('photoInput').dispatchEvent(new Event('change'));
-});
+    class AnthropicRepository {
+      constructor(apiEndpoint = 'https://api.anthropic.com/v1/messages') {
+        this.apiEndpoint = apiEndpoint;
+      }
 
-// Analyze
-document.getElementById('analyzeBtn').addEventListener('click', async () => {
-  if (!hasImg||!imgB64) return;
-  const btn = document.getElementById('analyzeBtn');
-  btn.disabled = true;
-  document.getElementById('statusText').style.display = 'none';
-  document.getElementById('loadingIndicator').style.display = 'flex';
+      async analyzeCharacterFace(photoBase64, photoMime, character) {
+        const prompt = this.buildAnalysisPrompt(character);
+        
+        try {
+          const response = await fetch(this.apiEndpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              model: 'claude-sonnet-4-20250514',
+              max_tokens: 1200,
+              messages: [{
+                role: 'user',
+                content: [
+                  {
+                    type: 'image',
+                    source: {
+                      type: 'base64',
+                      media_type: photoMime,
+                      data: photoBase64
+                    }
+                  },
+                  { type: 'text', text: prompt }
+                ]
+              }]
+            })
+          });
 
-  const prompt = `You are an expert Dragon's Dogma 2 character creator. Analyze this face photo and return ONLY a valid JSON object. No markdown, no backticks, no explanation.
+          const data = await response.json();
+          
+          if (data.error) {
+            throw new Error(data.error.message);
+          }
 
-Race: ${race}. Gender: ${gender}. Vocation: ${vocation}.
+          const text = (data.content || [])
+            .map(block => block.text || '')
+            .join('');
+          
+          const cleaned = text.replace(/```json|```/g, '').trim();
+          return JSON.parse(cleaned);
+        } catch (error) {
+          throw new Error(`API Error: ${error.message}`);
+        }
+      }
+
+      buildAnalysisPrompt(character) {
+        return `You are an expert Dragon's Dogma 2 character creator. Analyze this face photo and return ONLY a valid JSON object. No markdown, no backticks, no explanation.
+
+Race: ${character.race}. Gender: ${character.gender}. Vocation: ${character.vocation}.
 
 Map facial features to these exact DD2 slider IDs and ranges:
 
@@ -616,55 +805,310 @@ jaw_definition (-100,100), jaw_width (-100,100), jaw_position (-100,100), jaw_pr
 root_color (1-120), tip_color (1-120), eyebrow_color (1-120), iris_primary (1-200), sclera_color (1-200)
 
 Be precise. Analyze real facial structure carefully.`;
+      }
+    }
 
-  try {
-    const resp = await fetch("https://api.anthropic.com/v1/messages",{
-      method:"POST", headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({ model:"claude-sonnet-4-20250514", max_tokens:1200,
-        messages:[{role:"user",content:[
-          {type:"image",source:{type:"base64",media_type:imgMime,data:imgB64}},
-          {type:"text",text:prompt}
-        ]}]
-      })
-    });
-    const data = await resp.json();
-    if (data.error) throw new Error(data.error.message);
-    const text = (data.content||[]).map(b=>b.text||'').join('');
-    const parsed = JSON.parse(text.replace(/```json|```/g,'').trim());
-    applyVals(parsed);
-    document.getElementById('loadingIndicator').style.display = 'none';
-    document.getElementById('statusText').style.display = 'block';
-    document.getElementById('statusText').textContent = '✦ Análise concluída! Navegue pelas abas para ver todos os sliders ajustados.';
-    btn.textContent = '⚔ Reanalisar';
-  } catch(err) {
-    document.getElementById('loadingIndicator').style.display = 'none';
-    document.getElementById('statusText').style.display = 'block';
-    document.getElementById('statusText').textContent = 'Erro: ' + (err.message||'Tente novamente.');
-  } finally { btn.disabled=false; }
-});
+    const anthropicRepository = new AnthropicRepository();
+  </script>
 
-// Copy
-document.getElementById('copyBtn').addEventListener('click', () => {
-  const names = {
-    'body_body':'Corpo','body_head':'Cabeça (Proporções)','body_upper':'Parte Superior','body_lower':'Parte Inferior','body_posture':'Postura',
-    'head_skin':'Base & Pele','head_brow':'Sobrancelhas','head_eyes':'Olhos','head_nose':'Nariz','head_ears':'Orelhas','head_cheeks':'Bochechas','head_mouth':'Boca','head_jaw':'Mandíbula & Queixo',
-    'hair_hair':'Cabelo','hair_eyebrows':'Sobrancelhas (cor)','hair_facial':'Barba','hair_body':'Pelo Corporal',
-    'makeup_eyeball':'Globo Ocular','makeup_eyelashes':'Cílios','makeup_eyeshadow':'Sombra','makeup_eyeliner':'Delineador','makeup_freckles':'Sardas','makeup_cheek':'Blush','makeup_lips':'Batom','makeup_teeth':'Dentes',
-    'tattoo_body':'Tatuagem','scars':'Cicatrizes','dirt':'Sujeira'
-  };
-  const lines = [`=== Dragon's Dogma 2 — Arisen ===`,`Raça: ${race} | Gênero: ${gender} | Vocação: ${vocation}`,``];
-  Object.entries(SLIDER_DEFS).forEach(([sec, sliders]) => {
-    lines.push(`--- ${names[sec]||sec} ---`);
-    sliders.forEach(s => lines.push(`${s.name}: ${vals[s.id]}`));
-    lines.push('');
-  });
-  navigator.clipboard.writeText(lines.join('\n')).then(()=>{
-    const btn=document.getElementById('copyBtn');
-    btn.textContent='✓ Copiado!'; setTimeout(()=>btn.textContent='Copiar Configurações ↗',2000);
-  });
-});
+  <!-- Layer 3: Use Cases (Application Services) -->
+  <script>
+    /**
+     * USE CASES LAYER
+     * Orchestrates domain logic and repositories
+     */
 
-buildAll();
-</script>
+    class CharacterAnalysisUseCase {
+      constructor(repository, characterConfig) {
+        this.repository = repository;
+        this.characterConfig = characterConfig;
+      }
+
+      async execute(photoBase64, photoMime) {
+        const result = await this.repository.analyzeCharacterFace(
+          photoBase64,
+          photoMime,
+          this.characterConfig
+        );
+        
+        this.applySliderValues(result);
+        return result;
+      }
+
+      applySliderValues(sliderData) {
+        Object.entries(sliderData).forEach(([sliderId, value]) => {
+          this.characterConfig.setSliderValue(sliderId, value);
+        });
+      }
+    }
+
+    class ExportCharacterUseCase {
+      constructor(characterConfig) {
+        this.characterConfig = characterConfig;
+      }
+
+      execute() {
+        const sectionNames = {
+          'body_body': 'Corpo',
+          'body_head': 'Cabeça (Proporções)',
+          'body_upper': 'Parte Superior',
+          'body_lower': 'Parte Inferior',
+          'body_posture': 'Postura',
+          'head_skin': 'Base & Pele',
+          'head_brow': 'Sobrancelhas',
+          'head_eyes': 'Olhos',
+          'head_nose': 'Nariz',
+          'head_ears': 'Orelhas',
+          'head_cheeks': 'Bochechas',
+          'head_mouth': 'Boca',
+          'head_jaw': 'Mandíbula & Queixo',
+          'hair_hair': 'Cabelo',
+          'hair_eyebrows': 'Sobrancelhas (cor)',
+          'makeup_eyeball': 'Globo Ocular',
+        };
+
+        const lines = [
+          `=== Dragon's Dogma 2 — Arisen ===`,
+          `Raça: ${this.characterConfig.race} | Gênero: ${this.characterConfig.gender} | Vocação: ${this.characterConfig.vocation}`,
+          ''
+        ];
+
+        Object.entries(SLIDER_DEFINITIONS).forEach(([section, sliders]) => {
+          lines.push(`--- ${sectionNames[section] || section} ---`);
+          sliders.forEach(slider => {
+            const value = this.characterConfig.getSliderValue(slider.id);
+            lines.push(`${slider.name}: ${value}`);
+          });
+          lines.push('');
+        });
+
+        return lines.join('\n');
+      }
+    }
+
+    const analysisUseCase = new CharacterAnalysisUseCase(anthropicRepository, characterConfig);
+    const exportUseCase = new ExportCharacterUseCase(characterConfig);
+  </script>
+
+  <!-- Layer 4: Presentation (UI Controllers) -->
+  <script>
+    /**
+     * PRESENTATION LAYER
+     * Handles UI interactions and DOM manipulation
+     */
+
+    class UIController {
+      constructor() {
+        this.photoInput = document.getElementById('photoInput');
+        this.uploadZone = document.getElementById('uploadZone');
+        this.analyzeBtn = document.getElementById('analyzeBtn');
+        this.copyBtn = document.getElementById('copyBtn');
+        this.previewImg = document.getElementById('previewImg');
+        this.statusText = document.getElementById('statusText');
+        this.loadingIndicator = document.getElementById('loadingIndicator');
+      }
+
+      renderCharacterOptions() {
+        this.renderPills('racePills', CHARACTER_OPTIONS.races, 'race');
+        this.renderPills('genderPills', CHARACTER_OPTIONS.genders, 'gender');
+        this.renderPills('vocationPills', CHARACTER_OPTIONS.vocations, 'vocation');
+      }
+
+      renderPills(containerId, options, property) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = options
+          .map(option => {
+            const isActive = characterConfig[property] === option ? 'active' : '';
+            return `<button class="pill ${isActive}" data-value="${option}">${option}</button>`;
+          })
+          .join('');
+
+        container.addEventListener('click', (e) => {
+          if (e.target.classList.contains('pill')) {
+            container.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+            e.target.classList.add('active');
+            characterConfig[property] = e.target.dataset.value;
+          }
+        });
+      }
+
+      renderSliderPages() {
+        const container = document.getElementById('pagesContainer');
+        const tabsContainer = document.getElementById('pageTabs');
+        
+        const pages = Object.entries(SLIDER_DEFINITIONS);
+        const sectionNames = {
+          'body_body': 'Corpo',
+          'body_head': 'Cabeça',
+          'body_upper': 'Superior',
+          'body_lower': 'Inferior',
+          'body_posture': 'Postura',
+          'head_skin': 'Pele',
+          'head_brow': 'Sobrancelhas',
+          'head_eyes': 'Olhos',
+          'head_nose': 'Nariz',
+          'head_ears': 'Orelhas',
+          'head_cheeks': 'Bochechas',
+          'head_mouth': 'Boca',
+          'head_jaw': 'Mandíbula',
+          'hair_hair': 'Cabelo',
+          'hair_eyebrows': 'Cor Sobrancelha',
+          'makeup_eyeball': 'Olhos',
+        };
+
+        // Render tabs
+        tabsContainer.innerHTML = pages
+          .map(([sectionId], index) => {
+            const isActive = index === 0 ? 'active' : '';
+            return `<button class="page-tab ${isActive}" data-page="${index}">${sectionNames[sectionId]}</button>`;
+          })
+          .join('');
+
+        // Render pages
+        container.innerHTML = pages
+          .map(([sectionId, sliders], index) => {
+            const isActive = index === 0 ? 'active' : '';
+            return `
+              <div class="page-content ${isActive}" data-page="${index}">
+                <h3 class="section-title">
+                  <span class="section-dot"></span>
+                  ${sectionNames[sectionId]}
+                </h3>
+                <div class="sliders-grid">
+                  ${sliders.map(slider => this.createSliderHTML(slider)).join('')}
+                </div>
+              </div>
+            `;
+          })
+          .join('');
+
+        // Tab navigation
+        tabsContainer.addEventListener('click', (e) => {
+          if (e.target.classList.contains('page-tab')) {
+            const pageIndex = e.target.dataset.page;
+            tabsContainer.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
+            e.target.classList.add('active');
+            container.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+            container.querySelector(`[data-page="${pageIndex}"]`).classList.add('active');
+          }
+        });
+
+        // Slider value updates
+        container.addEventListener('input', (e) => {
+          if (e.target.type === 'range') {
+            const sliderId = e.target.dataset.id;
+            const value = e.target.value;
+            characterConfig.setSliderValue(sliderId, parseInt(value));
+            e.target.nextElementSibling.textContent = value;
+          }
+        });
+      }
+
+      createSliderHTML(slider) {
+        const value = characterConfig.getSliderValue(slider.id) || slider.min;
+        return `
+          <div class="slider-row">
+            <div class="slider-header">
+              <span class="slider-name">${slider.name}</span>
+              <span class="slider-val">${value}</span>
+            </div>
+            <input type="range" data-id="${slider.id}" min="${slider.min}" max="${slider.max}" value="${value}"/>
+          </div>
+        `;
+      }
+
+      setupPhotoUpload() {
+        this.photoInput.addEventListener('change', (e) => this.handlePhotoSelect(e));
+        this.uploadZone.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          this.uploadZone.style.borderColor = '#c8952a';
+        });
+        this.uploadZone.addEventListener('dragleave', () => {
+          this.uploadZone.style.borderColor = '';
+        });
+        this.uploadZone.addEventListener('drop', (e) => {
+          e.preventDefault();
+          this.uploadZone.style.borderColor = '';
+          const file = e.dataTransfer.files[0];
+          if (file) this.processPhoto(file);
+        });
+      }
+
+      handlePhotoSelect(event) {
+        const file = event.target.files[0];
+        if (file) this.processPhoto(file);
+      }
+
+      processPhoto(file) {
+        photoData.mime = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'].includes(file.type)
+          ? file.type
+          : 'image/jpeg';
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          photoData.base64 = e.target.result.split(',')[1];
+          this.previewImg.src = e.target.result;
+          this.previewImg.style.display = 'block';
+          document.getElementById('uploadIcon').style.display = 'none';
+          document.getElementById('uploadText').style.display = 'none';
+          this.analyzeBtn.style.display = 'block';
+          this.statusText.textContent = 'Foto carregada! Clique em "Analisar Rosto".';
+        };
+        reader.readAsDataURL(file);
+      }
+
+      setupAnalyzeButton() {
+        this.analyzeBtn.addEventListener('click', () => this.analyze());
+      }
+
+      async analyze() {
+        if (!photoData.base64) return;
+
+        this.analyzeBtn.disabled = true;
+        this.statusText.style.display = 'none';
+        this.loadingIndicator.style.display = 'flex';
+
+        try {
+          await analysisUseCase.execute(photoData.base64, photoData.mime);
+          this.statusText.textContent = '✦ Análise concluída! Navegue pelas abas para ver todos os sliders ajustados.';
+          this.analyzeBtn.textContent = '⚔ Reanalisar';
+          this.renderSliderPages();
+        } catch (error) {
+          this.statusText.textContent = `Erro: ${error.message}`;
+        } finally {
+          this.loadingIndicator.style.display = 'none';
+          this.statusText.style.display = 'block';
+          this.analyzeBtn.disabled = false;
+        }
+      }
+
+      setupCopyButton() {
+        this.copyBtn.addEventListener('click', async () => {
+          const text = exportUseCase.execute();
+          try {
+            await navigator.clipboard.writeText(text);
+            this.copyBtn.textContent = '✓ Copiado!';
+            setTimeout(() => {
+              this.copyBtn.textContent = 'Copiar Configurações ↗';
+            }, 2000);
+          } catch (error) {
+            this.statusText.textContent = 'Erro ao copiar para clipboard.';
+          }
+        });
+      }
+
+      initialize() {
+        this.renderCharacterOptions();
+        this.renderSliderPages();
+        this.setupPhotoUpload();
+        this.setupAnalyzeButton();
+        this.setupCopyButton();
+      }
+    }
+
+    // Initialize application
+    const uiController = new UIController();
+    uiController.initialize();
+  </script>
 </body>
 </html>
