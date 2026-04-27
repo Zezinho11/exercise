@@ -20,7 +20,7 @@
 </header>
 
 
-
+<!--
 <table>
 <tr>
 <td>Monkey 1</td>
@@ -34,45 +34,51 @@
     <td>Monkey 6</td>
 </tr>
 </table>
-
+-->
 
 <!-- Exemplo de tabela estruturada -->
 <p>
     <table>
+    <thead>
     <tr>
-        <th colspan="3">Games</th>
-        <th>RE Requiem</th>
-        <th>Elden Ring</th>
-        <th>Monster Hunter Wilds</th>
-        <th>Pragmata</th>
-        <th>Crimson Desert</th>
+        <th scope="col">Games</th>
+        <th scope="col">RE Requiem</th>
+        <th scope="col">Elden Ring</th>
+        <th scope="col">Monster Hunter Wilds</th>
+        <th scope="col">Pragmata</th>
+        <th scope="col">Crimson Desert</th>
     </tr>
+    </thead>
+    <tbody>
     <tr>
-        <th colspan="3">Playtime</th>
+        <th scope="col">Playtime</th>
         <td>30-40 hours</td>
         <td colspan="2">300+ hours</td>
         <td>30 hours</td>
         <td>Infinity</td>
     </tr>
     <tr>
-        <th colspan="3">Platinum</th>
+        <th scope="col">Platinum</th>
         <td>Yes</td>
         <td>Yes</td>
         <td>No</td>
         <td colspan="2">Not yet</td>
     </tr>
     <tr>
-        <th colspan="3">Rating</th>
+        <th scope="col">Rating</th>
         <td>8/10</td>
         <td>100000/10</td>
         <td>9/10</td>
         <td>10/10</td>
         <td>not played yet</td>
     </tr>
+    </tbody>
+    <tfoot>
     <!-- Table caption example -->
     <caption>
         Games played thought life!
     </caption>
+    </tfoot>
     </table>
 
 <footer>

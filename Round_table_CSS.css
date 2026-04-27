@@ -4,18 +4,19 @@ html {
 
 table {
     border-collapse: collapse;
-    border: 2px solid rgb(200,200,200);
+    border: 2px solid rgb(200 200 200);
     letter-spacing: 1px;
     font-size: 0.8rem;
 }
 
-td, th {
-    border: 1px solid rgb(190,190,190);
+td,
+th {
+    border: 1px solid rgb(190 190 190);
     padding: 10px 20px;
 }
 
 th {
-    background-color: rgb(235,235,235);
+    background-color: rgb(235 235 235);
 }
 
 td {
@@ -23,28 +24,29 @@ td {
 }
 
 tr:nth-child(even) td {
-    background-color: rgb(250,250,250);
+    background-color: rgb(250 250 250);
 }
 
 tr:nth-child(odd) td {
-    background-color: rgb(245,245,245);
+    background-color: rgb(245 245 245);
 }
 
 caption {
     padding: 10px;
 }
 
-table, th, td {
-background-color: green;
+thead {
+    background-color: rgb(255 0 0);
+    font-weight: bold;
+    font-size: 1rem;
 }
 
-table, th, td {
-    border: 1px solid #000000;
+
+tbody {
+    font-size: 95%;
+    font-style: italic;
 }
 
-table, td {
-    border-collapse: collapse;
-    border: 2px solid rgb(200,200,200);
-    letter-spacing: 1px;
-    font-size: 0.8rem;
+tfoot {
+    font-weight: bold;
 }
