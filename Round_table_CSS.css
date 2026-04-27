@@ -33,3 +33,18 @@ tr:nth-child(odd) td {
 caption {
     padding: 10px;
 }
+
+table, th, td {
+background-color: green;
+}
+
+table, th, td {
+    border: 1px solid #000000;
+}
+
+table, td {
+    border-collapse: collapse;
+    border: 2px solid rgb(200,200,200);
+    letter-spacing: 1px;
+    font-size: 0.8rem;
+}
