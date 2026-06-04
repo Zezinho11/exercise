@@ -1,45 +1,36 @@
 <!DOCTYPE html>
-<html lang="pt-BR"></html>
+<html lang="pt-BR">
+
+</html>
+
 <head>
     <meta charset="utf-8" />
 
 
 
-<!--Estrutura de cabeçalho/titulo-->
+    <!--Estrutura de cabeçalho/titulo-->
     <title>Minha pagina</title>
-    <link
-            href="Css.css"
-            rel="stylesheet"
-            type="text/css" />
+    <link href="Css.css" rel="stylesheet" type="text/css" />
     <link rel="Css.css" href="Css.css" />
 
     <!-- Sempre posicionado no cabeçalho para linkar o css ao arquivo principal -->
-    <link rel="stylesheet" href="Css.css"/>
+    <link rel="stylesheet" href="Css.css" />
     <meta charset="UTF-8">
     <meta name="José Suzuki" content="Construção estrutural HTML 5">
-    <meta name="Descrição" content="exemplos baseado no estudo do html, abaixo segue-se contrução e exemplo da estrutura de alguns elementos e funções na linguagem">
+    <meta name="Descrição"
+        content="exemplos baseado no estudo do html, abaixo segue-se contrução e exemplo da estrutura de alguns elementos e funções na linguagem">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta
-        property="og:image"
-        content="https://developer.mozilla.org/mdn-social-share.png"/>
-    <meta
-        property="og:description"
-        content="A Mozilla Developer Network (MDN) fornece
+    <meta property="og:image" content="https://developer.mozilla.org/mdn-social-share.png" />
+    <meta property="og:description" content="A Mozilla Developer Network (MDN) fornece
         informações sobre tecnologias Open Web, incluindo HTML, CSS e APIs para ambos os sites da Web
         e aplicativos HTML5. Ele também documenta produtos Mozilla, como o sistema operacional Firefox." />
     <meta property="og:title" content="Mozilla developer network">
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
 
     <!-- iPad de terceira geração com tela retina de alta resolução: -->
-    <link
-            rel="apple-touch-icon-precomposed"
-            sizes="144x144"
-            href="favicon144.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="favicon144.png" />
     <!-- iPhone com tela retina de alta resolução: -->
-    <link
-            rel="apple-touch-icon-precomposed"
-            sizes="114x114"
-            href="favicon114.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="favicon114.png" />
     <!-- iPad de primeira e segunda geração: -->
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="favicon72.png" />
     <!-- iPhone não-Retina, iPod Touch e dispositivos Android 2.1+: -->
@@ -54,308 +45,302 @@
     <h2><em>Por José Carlos Suzuki</em></h2>
     <h3>ご飯が熱い</h3>
 </head>
+
 <body>
 
-<main>
+    <main>
 
-<!--Estrutura de conteudo-->
-<header>
-    <h1>Menu</h1>
-</header>
+        <!--Estrutura de conteudo-->
+        <header>
+            <h1>Menu</h1>
+        </header>
 
-    <nav>
+        <nav>
 
+            <ul>
+                <li><a href="#">Home</a><br></li>
+                <li><a href="#">Nosso time</a><br></li>
+                <li><a href="#">Projetos</a><br></li>
+                <li><a href="#">Contato</a><br></li>
+            </ul>
+
+            <form>
+                <input type="search" name="q" placeholder="Pesquisar" />
+                <input type="submit" value="vá!" />
+            </form>
+
+        </nav>
+
+
+        <p>
         <ul>
-            <li><a href="#">Home</a><br></li>
-            <li><a href="#">Nosso time</a><br></li>
-            <li><a href="#">Projetos</a><br></li>
-            <li><a href="#">Contato</a><br></li>
+            <li>Estrutura e exemplos HTML:</li>
         </ul>
+        </p>
 
-        <form>
-            <input type="search" name="q" placeholder="Pesquisar" />
-            <input type="submit" value="vá!" />
-        </form>
+        <!--Elementos de paragrafo com atributos no texto-->
+        <p>dedo no <strong>CU</strong> e guitar hero</p>
+        <p><em>VAI TOMAR NO <strong>CU</strong> BOLSONARO</em></p>
 
-    </nav>
+        <!--Hyperlink-->
+        <p class="teste">Link para um dos melhores sites</p>
+        <p><a href="https://www.pornhub.com">Top melhores sites</a></p>
 
+        <!--anatomia e criação de links-->
+        <p>
+            Gere seu personagem em Dragons Dogma 2:
+            <a href="DD-2.html">Crie seu personagem aqui</a>
+        </p>
 
-<p>
-    <ul>
-    <li>Estrutura e exemplos HTML:</li>
-</ul>
-</p>
+        <p>
+            <a href="mailto:jcbrandine@gmail.com">enviar email pra encher meu saco</a>
+        </p>
 
-<!--Elementos de paragrafo com atributos no texto-->
-<p>dedo no <strong>CU</strong> e guitar hero</p>
-<p><em>VAI TOMAR NO <strong>CU</strong> BOLSONARO</em></p>
-
-<!--Hyperlink-->
-<p class = "teste">Link para um dos melhores sites</p>
-<p><a href="https://www.pornhub.com">Top melhores sites</a></p>
-
-<!--anatomia e criação de links-->
-<p>
-    Gere seu personagem em Dragons Dogma 2:
-    <a href="DD-2.html">Crie seu personagem aqui</a>
-</p>
-
-<p>
-    <a href="mailto:jcbrandine@gmail.com">enviar email pra encher meu saco</a>
-</p>
-
-<p>
-<a href="https://www.mozilla.org/pt-BR/">
-    <img
-            src="mozilla-image.png"
-            alt="Mozilla" />
-</a>
-</p>
-<p>
-    <a href="https://download.mozilla.org/?product=firefox-39.0-SSL&os=win&lang=en-US"
-    download="firefox-39-installer.exe">
-    Baixe a raposinha!
-    </a>
-</p>
+        <p>
+            <a href="https://www.mozilla.org/pt-BR/">
+                <img src="mozilla-image.png" alt="Mozilla" />
+            </a>
+        </p>
+        <p>
+            <a href="https://download.mozilla.org/?product=firefox-39.0-SSL&os=win&lang=en-US"
+                download="firefox-39-installer.exe">
+                Baixe a raposinha!
+            </a>
+        </p>
 
 
 
-<!--Caixas de texto para input de texto e botao para as caixas-->
-<input type="text" id="textInput" placeholder="Se não digitar é gay">
-<button onclick="alert(document.getElementById('textInput').value)">se não clicar é gay</button>
-<input type="text" id="Teixto" placeholder="digita se for homi">
-<button onclick="alert(document.getElementById('Teixto').value)">arrei a mão no botão arreia</button>
+        <!--Caixas de texto para input de texto e botao para as caixas-->
+        <input type="text" id="textInput" placeholder="Se não digitar é gay">
+        <button onclick="alert(document.getElementById('textInput').value)">se não clicar é gay</button>
+        <input type="text" id="Teixto" placeholder="digita se for homi">
+        <button onclick="alert(document.getElementById('Teixto').value)">arrei a mão no botão arreia</button>
 
-<!--elementos de paragrafo-->
-<p>Doente de amor, procurei remedio na vida noturna</p>
-<p>Em uma boate aqui da zona sul</p>
+        <!--elementos de paragrafo-->
+        <p>Doente de amor, procurei remedio na vida noturna</p>
+        <p>Em uma boate aqui da zona sul</p>
 
-<!--Estilos de titulo-->
-<!--usar no maximo 3 estilos por pagina-->
-<h1>ado ado ado</h1>
-<h2>caneta azul, azul caneta</h2>
-<h3>macaco macacooooooooo</h3>
-<h4>30 de setembro 98</h4>
+        <!--Estilos de titulo-->
+        <!--usar no maximo 3 estilos por pagina-->
+        <h1>ado ado ado</h1>
+        <h2>caneta azul, azul caneta</h2>
+        <h3>macaco macacooooooooo</h3>
+        <h4>30 de setembro 98</h4>
 
-<!--Estrutura de listas com pontos-->
-<p>
-    <ul>
-    <li>Macaco 1</li>
-    <li>macaco 2</li>
-    <Li>macaco 3</Li>
-</ul>
-</p>
+        <!--Estrutura de listas com pontos-->
+        <p>
+        <ul>
+            <li>Macaco 1</li>
+            <li>macaco 2</li>
+            <Li>macaco 3</Li>
+        </ul>
+        </p>
 
-<!-- Estrutura de lista numerada -->
-<p>
-<ol>
-    <li>Macaco 4</li>
-    <li>macaco 5</li>
-    <Li>macaco 6</Li>
-</ol>
-</p>
+        <!-- Estrutura de lista numerada -->
+        <p>
+        <ol>
+            <li>Macaco 4</li>
+            <li>macaco 5</li>
+            <Li>macaco 6</Li>
+        </ol>
+        </p>
 
-<!--whitesspace-->
-<p id="noWhitespace"> oia o macaco macacooo </p>
-<p id="whitespace">oia
-    o
-        macaco
+        <!--whitesspace-->
+        <p id="noWhitespace"> oia o macaco macacooo </p>
+        <p id="whitespace">oia
+            o
+            macaco
             macacooo</p>
 
-<!--Divs-->
-<section>
-    <div>
-    <p>Eu vou deixar de ser besta e arrumar uma muié pa mim</p>
-        <p>AI BOLSONARO GOZA EM MIM GOZA BOLSONARO</p>
-        <p> vai toma no cu lula</p>
-    </div>
-</section>
+        <!--Divs-->
+        <section>
+            <div>
+                <p>Eu vou deixar de ser besta e arrumar uma muié pa mim</p>
+                <p>AI BOLSONARO GOZA EM MIM GOZA BOLSONARO</p>
+                <p> vai toma no cu lula</p>
+            </div>
+        </section>
 
-<!--Lolozinha S2-->
-<p><strong>Eloísa Suzuki S2</strong></p>
+        <!--Lolozinha S2-->
+        <p><strong>Eloísa Suzuki S2</strong></p>
 
 
-<p>
-    Alguma sugestão Use nosso <a href="contacts.html #Mailing_address"
->E-mail</a
->.
-</p>
-
-<p>
-    O <a href="#Mailing_address">E-mail</a> pode ser
-    encontrado na parte inferior desta página.
-</p>
-
-<!--Lista de Descrição-->
-<p>
-    <dt><em><strong>EU TENTEIIIII</strong></em></dt>
-    <dd>
-        <li>Eu queria andar na linha mas o tesao não colabora.</li>
-    </dd>
-</p>
-
-<p>
-<dl>
-    <dt>Bacon</dt>
-    <dd>The glue that binds the world together.</dd>
-    <dt>Eggs</dt>
-    <dd>The glue that binds the cake together.</dd>
-    <dt>Coffee</dt>
-    <dd>The drink that gets the world running in the morning.</dd>
-    <dd>A light brown color.</dd>
-</dl>
-</p>
-
-<!--citação-->
-<p>Hello and welcome to my motivation page. As <a href="http://www.brainyquote.com/quotes/authors/c/confucius.html"><cite>Confucius</cite></a> once said:</p>
-
-<blockquote cite="http://www.brainyquote.com/quotes/authors/c/confucius.html">
-    <p>It does not matter how slowly you go as long as you do not stop.</p>
-</blockquote>
-
-<p>I also love the concept of positive thinking, and <q cite="http://example.com/affirmationsforpositivethinking">The Need To Eliminate Negative Self Talk</q>
-    (as mentioned in <a href="http://example.com/affirmationsforpositivethinking"><cite>Affirmations for Positive Thinking</cite></a>.)</p>
-
-<!--Abreviação-->
-<p>
-    <abbr title="Instituto internacional de informações tiradas da bunda">IIITB</abbr> reconhecimento internacional sobre informações relevantes</p>
-
-<!--sobrescrito e subscrito-->
-<p>My birthday is on the 25<sup>th</sup> of May 2001.</p>
-<p>
-    Caffeine's chemical formula is
-    C<sub>8</sub>H<sub>10</sub>N<sub>4</sub>O<sub>2</sub>.
-</p>
-<p>If x<sup>2</sup> is 9, x must equal 3 or -3.</p>
-<p>best day ever, the 11<sup>th</sup> of september</p>
-</main>
-<p>
-    You shouldn't use presentational elements like <code>&lt;font&gt;</code> and
-    <code>&lt;center&gt;</code>.
-</p>
-
-<p>
-    In the above JavaScript example, <var>para</var> represents a paragraph
-    element.
-</p>
-
-<!--Marcação de tempo-->
-<time datetime="2019-03-26">26 de março de 2019</time>
-
-<!-- Data simples padrão -->
-<time datetime="2016-01-20">20 January 2016</time>
-<!-- Apenas ano e mês -->
-<time datetime="2016-01">January 2016</time>
-<!-- Just month and day -->
-<time datetime="01-20">20 January</time>
-<!-- Apenas tempo, horas e minutos -->
-<time datetime="19:30">19:30</time>
-<!-- Você pode fazer segundos e milissegundos também! -->
-<time datetime="19:30:01.856">19:30:01.856</time>
-<!-- Data e hora -->
-<time datetime="2016-01-20T19:30">7.30pm, 20 January 2016</time>
-<!-- Data e hora com compensação de fuso horário -->
-<time datetime="2016-01-20T19:30+01:00"
->7.30pm, 20 January 2016 is 8.30pm in France</time
->
-<!-- Chamando um número de semana específico -->
-<time datetime="2016-W04">The fourth week of 2016</time>
-
-<!--elementos não semanticos-->
-<p>
-    Era uma vez um homem chamado O'Dell<br />
-    Que adorava escrever HTML<br />
-    Mas sua estrutura era ruim, sua semântica era triste<br />
-    e sua marcação não leu muito bem.
-</p>
-<!--<div> tambem são elementos não semanticos-->
-
-<!-- Imagens -->
-<figure>
-<td>
-<img src="https://uploads.jovemnerd.com.br/wp-content/uploads/2020/03/the-office-steve-carell-sair-da-serie.jpg?ims=1210x544/filters:quality(75)"
-     alt="Michael scott happy face"
-     width="700" height="400"
-    title="a HAPPY man"/>
-    <figcaption>
-        A happy depressed man
-    </figcaption>
-    <blockquote>
         <p>
-            Jugemu Jugemu Gokō-no Surikire Kaijarisuigyo-no Suigyōmatsu<br>
-            Unraimatsu Fūraimatsu Kūnerutokoro-ni Sumutokoro Yaburakōji-no<br>
-            Burakōji Paipopaipo Paipo-no Shūringan Shūringan-no Gūrindai<br>
-            Gūrindai-no Ponpokopii-no Ponpokonā-no Chōkyūmei-no Chōsuke<br>
+            Alguma sugestão Use nosso <a href="contacts.html #Mailing_address">E-mail</a>.
         </p>
-        <footer>Suzuki, José, <cite>Mss. Pamela</cite></footer>
-    </blockquote>
-</td>
-</figure>
+
+        <p>
+            O <a href="#Mailing_address">E-mail</a> pode ser
+            encontrado na parte inferior desta página.
+        </p>
+
+        <!--Lista de Descrição-->
+        <p>
+            <dt><em><strong>EU TENTEIIIII</strong></em></dt>
+            <dd>
+                <li>Eu queria andar na linha mas o tesao não colabora.</li>
+            </dd>
+        </p>
+
+        <p>
+        <dl>
+            <dt>Bacon</dt>
+            <dd>The glue that binds the world together.</dd>
+            <dt>Eggs</dt>
+            <dd>The glue that binds the cake together.</dd>
+            <dt>Coffee</dt>
+            <dd>The drink that gets the world running in the morning.</dd>
+            <dd>A light brown color.</dd>
+        </dl>
+        </p>
+
+        <!--citação-->
+        <p>Hello and welcome to my motivation page. As <a
+                href="http://www.brainyquote.com/quotes/authors/c/confucius.html"><cite>Confucius</cite></a> once said:
+        </p>
+
+        <blockquote cite="http://www.brainyquote.com/quotes/authors/c/confucius.html">
+            <p>It does not matter how slowly you go as long as you do not stop.</p>
+        </blockquote>
+
+        <p>I also love the concept of positive thinking, and <q
+                cite="http://example.com/affirmationsforpositivethinking">The Need To Eliminate Negative Self Talk</q>
+            (as mentioned in <a href="http://example.com/affirmationsforpositivethinking"><cite>Affirmations for
+                    Positive Thinking</cite></a>.)</p>
+
+        <!--Abreviação-->
+        <p>
+            <abbr title="Instituto internacional de informações tiradas da bunda">IIITB</abbr> reconhecimento
+            internacional sobre informações relevantes
+        </p>
+
+        <!--sobrescrito e subscrito-->
+        <p>My birthday is on the 25<sup>th</sup> of May 2001.</p>
+        <p>
+            Caffeine's chemical formula is
+            C<sub>8</sub>H<sub>10</sub>N<sub>4</sub>O<sub>2</sub>.
+        </p>
+        <p>If x<sup>2</sup> is 9, x must equal 3 or -3.</p>
+        <p>best day ever, the 11<sup>th</sup> of september</p>
+    </main>
+    <p>
+        You shouldn't use presentational elements like <code>&lt;font&gt;</code> and
+        <code>&lt;center&gt;</code>.
+    </p>
+
+    <p>
+        In the above JavaScript example, <var>para</var> represents a paragraph
+        element.
+    </p>
+
+    <!--Marcação de tempo-->
+    <time datetime="2019-03-26">26 de março de 2019</time>
+
+    <!-- Data simples padrão -->
+    <time datetime="2016-01-20">20 January 2016</time>
+    <!-- Apenas ano e mês -->
+    <time datetime="2016-01">January 2016</time>
+    <!-- Just month and day -->
+    <time datetime="01-20">20 January</time>
+    <!-- Apenas tempo, horas e minutos -->
+    <time datetime="19:30">19:30</time>
+    <!-- Você pode fazer segundos e milissegundos também! -->
+    <time datetime="19:30:01.856">19:30:01.856</time>
+    <!-- Data e hora -->
+    <time datetime="2016-01-20T19:30">7.30pm, 20 January 2016</time>
+    <!-- Data e hora com compensação de fuso horário -->
+    <time datetime="2016-01-20T19:30+01:00">7.30pm, 20 January 2016 is 8.30pm in France</time>
+    <!-- Chamando um número de semana específico -->
+    <time datetime="2016-W04">The fourth week of 2016</time>
+
+    <!--elementos não semanticos-->
+    <p>
+        Era uma vez um homem chamado O'Dell<br />
+        Que adorava escrever HTML<br />
+        Mas sua estrutura era ruim, sua semântica era triste<br />
+        e sua marcação não leu muito bem.
+    </p>
+    <!--<div> tambem são elementos não semanticos-->
+
+    <!-- Imagens -->
+    <figure>
+        <td>
+            <img src="https://uploads.jovemnerd.com.br/wp-content/uploads/2020/03/the-office-steve-carell-sair-da-serie.jpg?ims=1210x544/filters:quality(75)"
+                alt="Michael scott christmas" width="700" height="400" title="a HAPPY man" />
+            <figcaption>
+                A happy depressed man
+            </figcaption>
+            <blockquote>
+                <p>
+                    Jugemu Jugemu Gokō-no Surikire Kaijarisuigyo-no Suigyōmatsu<br>
+                    Unraimatsu Fūraimatsu Kūnerutokoro-ni Sumutokoro Yaburakōji-no<br>
+                    Burakōji Paipopaipo Paipo-no Shūringan Shūringan-no Gūrindai<br>
+                    Gūrindai-no Ponpokopii-no Ponpokonā-no Chōkyūmei-no Chōsuke<br>
+                </p>
+                <footer>Suzuki, José, <cite>Mss. Pamela</cite></footer>
+            </blockquote>
+        </td>
+    </figure>
 
     <p>
         viadinho viadao meu pau na sua mao
     </p>
 
 
-<!--HAPPY B-DAY TO MEEEEEEEEEEEE!!!!!!!!!!!!! -->
+    <!--HAPPY B-DAY TO MEEEEEEEEEEEE!!!!!!!!!!!!! -->
 
-<p>
-    As vezes esse dia, mas bem as vezes mesmo, é legal.
-    <time datetime="2026-04-20">B-day </time>
-    just one day after the other
-</p>
+    <p>
+        As vezes esse dia, mas bem as vezes mesmo, é legal.
+        <time datetime="2026-04-20">B-day </time>
+        just one day after the other
+    </p>
 
 
 
-<!-- Exemplo de video-->
-<video
-        controls
-        width="400"
-        height="400"
-        autoplay
-        loop
-        muted
-        poster="poster.png">
-    <source src="Video%20example.mp4" type="video/mp4" />
-   <!-- <source src="rabbit320.webm" type="video/webm" /> -->
-  <!--  <p>
+    <!-- Exemplo de video-->
+    <video controls width="400" height="400" autoplay loop muted poster="poster.png">
+        <source src="Video%20example.mp4" type="video/mp4" />
+        <!-- <source src="rabbit320.webm" type="video/webm" /> -->
+        <!--  <p>
         Your browser doesn't support HTML5 video. Here is a
         <a href="rabbit320.mp4">link to the video</a> instead.
     </p> -->
-</video>
+    </video>
 
 
 
-<!-- Exemplos de audio -->
-<audio controls>
-    <source src="audio%20example.mp3" type="audio/mp3" />
-    <!--<source src="viper.ogg" type="audio/ogg" />
+    <!-- Exemplos de audio -->
+    <audio controls>
+        <source src="audio%20example.mp3" type="audio/mp3" />
+        <!--<source src="viper.ogg" type="audio/ogg" />
     <p>
         Your browser doesn't support HTML5 audio. Here is a
         <a href="viper.mp3">link to the audio</a> instead.
     </p>-->
-</audio>
+    </audio>
 
 
-<!--Informações de rodapé/final da página abaixo-->
-<!--detalhes de contato-->
-<address>
-    <p>Page written by <a href="/authors/jose-suzuki/">José Suzuki.</a> </p>
-</address>
+    <!--Informações de rodapé/final da página abaixo-->
+    <!--detalhes de contato-->
+    <address>
+        <p>Page written by <a href="/authors/jose-suzuki/">José Suzuki.</a> </p>
+    </address>
 
-<p>
-    VAI TOMAR NO CU CARALHO
-</p>
+    <p>
+        VAI TOMAR NO CU CARALHO
+    </p>
 
-<!--Rodapé-->
-<footer>
-    ©Copyright 2026 by José Suzuki. All rights reversed. code reviewed in <time datetime="2026-04-28">04/05/2026</time>
-    <a href="Splash_Page_example.html">Splash page</a>
-    <a href="Round%20Table.html">Table</a>
-</footer>
+    <!--Rodapé-->
+    <footer>
+        ©Copyright 2026 by José Suzuki. All rights reversed. code reviewed in <time
+            datetime="2026-04-28">04/05/2026</time>
+        <a href="Splash_Page_example.html">Splash page</a>
+        <a href="Round%20Table.html">Table</a>
+    </footer>
 
-<!-- recomendado ficar antes da tag de fechamento body -->
-<!-- Puxa o JS para o codigo principal -->
-<script src="JS_exercise.js"></script>
+    <!-- recomendado ficar antes da tag de fechamento body -->
+    <!-- Puxa o JS para o codigo principal -->
+    <script src="JS_exercise.js"></script>
 </body>
+
 </html>
